@@ -82,7 +82,7 @@ const Setting = observer(({ index, config  }) => {
 
 export const MidiSettingsEditor = observer(() => {
 
-        const settings = this.props.stores.state.data[TARGET_PRESET][this.props.stores.state.currentPresetIndex]["midi"]
+        const settings = stores.state.data[TARGET_PRESET][stores.state.currentPresetIndex]["midi"]
 
         return (
             <div className="settings">

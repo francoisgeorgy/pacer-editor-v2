@@ -3,8 +3,8 @@ import {observer} from "mobx-react-lite";
 import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 import {stores} from "../stores";
-import "./PresetSelector.css";
 import Switch from "react-switch";
+import "./PresetSelector.css";
 
 // TODO: is observer needed here?
 const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
@@ -36,7 +36,7 @@ export const PresetSelector = observer(() => {
         if (index === "24") {
             // console.log("D6 loaded?", data && data[TARGET_PRESET] && data[TARGET_PRESET][index]);
             if (!(data && data[TARGET_PRESET] && data[TARGET_PRESET][index])) {
-                this.props.stores.state.showD6Info();
+                stores.state.showD6Info();
                 return;
             }
         }

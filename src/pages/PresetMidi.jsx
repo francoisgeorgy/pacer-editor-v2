@@ -93,7 +93,7 @@ export const PresetMidi = observer(() => {
 
                         {showEditor && <MidiSettingsEditor />}
 
-                        {stores.state.changed && stores.state.midi.output !== 0 &&         // FIXME: midiConnected(output) &&
+                        {stores.state.changed && stores.midi.outputInUse &&         // FIXME: midiConnected(output) &&
                         <div className="content-row-content mt-20 menu-buttons">
                             {/*<h2>Send the updated config to the Pacer</h2>*/}
                             <button className="action-button update" onClick={() => stores.state.updatePacer()}>Update Pacer</button>
