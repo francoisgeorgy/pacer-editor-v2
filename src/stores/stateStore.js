@@ -288,9 +288,11 @@ export class StateStore {
         this.forceReread = bool;
     }
 
+    clearBusyHandler = null;
+
     onBusy({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) {
 
-        console.log("StateStore.onBusy", busy, busyMessage, bytesExpected, bytesReceived, this.bytesExpected, this.busy);
+        // console.log("StateStore.onBusy", busy, busyMessage, bytesExpected, bytesReceived, this.bytesExpected, this.busy);
 
         let show = busy !== this.busy;
         show = show || (busyMessage !== null && busyMessage !== this.busyMessage);
@@ -300,7 +302,7 @@ export class StateStore {
         if (this.bytesExpected > 0 && bytesReceived > 0) {
             progress = Math.round(bytesReceived / this.bytesExpected * 100 / 5) * 5;
             show = show || ((progress >= 0) && (progress !== this.progress));
-            console.log("StateStore.onBusy %", progress, show);
+            // console.log("StateStore.onBusy %", progress, show);
         }
 
         if (show) {
@@ -317,11 +319,19 @@ export class StateStore {
                 }
             }
         }
+
+        if (this.clearBusyHandler) {
+            clearTimeout(this.clearBusyHandler);
+        }
+        if (busy) {
+            this.clearBusyHandler = setTimeout(() => this.onBusy({busy: false}), 1000);
+        }
+
     };
 
     showBusy({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) {
-        console.log("showBusy init, bytes expected, received:", bytesExpected, bytesReceived);
-        setTimeout(() => this.onBusy({busy: false}), 20000);
+        // console.log("showBusy init, bytes expected, received:", bytesExpected, bytesReceived);
+        // setTimeout(() => this.onBusy({busy: false}), 20000);
         this.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
     }
 
