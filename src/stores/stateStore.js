@@ -1,5 +1,4 @@
 import {computed, action, makeAutoObservable, observable} from "mobx";
-import {outputById} from "../utils/ports";
 import {MSG_CTRL_OFF, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import {
     buildPresetNameSysex,
