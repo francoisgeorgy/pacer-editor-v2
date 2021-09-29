@@ -21,6 +21,7 @@ specifiers:
   typeface-open-sans-condensed: ^1.1.13
   underscore: ^1.13.1
   vite: ^2.5.10
+  vite-plugin-replace: ^0.1.1
   webmidi: ^2.5.3
 
 dependencies:
@@ -42,6 +43,7 @@ dependencies:
   tonal-scale: 2.2.2
   typeface-open-sans-condensed: 1.1.13
   underscore: 1.13.1
+  vite-plugin-replace: 0.1.1_vite@2.5.10
   webmidi: 2.5.3
 
 devDependencies:
@@ -903,6 +905,14 @@ packages:
 
   /value-equal/1.0.1:
     resolution: {integrity: sha512-NOJ6JZCAWr0zlxZt+xqCHNTEKOsrks2HQd4MqhP1qy4z1SkbEP467eNx6TgDKXMvUOb+OENfJCZwM+16n7fRfw==}
+    dev: false
+
+  /vite-plugin-replace/0.1.1_vite@2.5.10:
+    resolution: {integrity: sha512-v+okl3JNt2pf1jDYijw+WPVt6h9FWa/atTi+qnSFBqmKThLTDhlesx0r3bh+oFPmxRJmis5tNx9HtN6lGFoqWg==}
+    peerDependencies:
+      vite: ^2
+    dependencies:
+      vite: 2.5.10
     dev: false
 
   /vite/2.5.10:
