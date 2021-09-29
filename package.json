@@ -1,0 +1,37 @@
+{
+  "name": "pacer-editor",
+  "version": "2.0.0-beta-1",
+  "author": "François Georgy <francois.georgy@gmail.com> (http://studiocode.dev)",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "immer": "^9.0.6",
+    "midi-manufacturers": "^1.1.0",
+    "mobx": "^6.3.3",
+    "mobx-react-lite": "^3.2.1",
+    "object-hash": "^2.2.0",
+    "parse-midi": "^2.0.2",
+    "query-string": "7.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-dropzone": "^11.4.2",
+    "react-router-dom": "^5.3.0",
+    "react-switch": "^6.0.0",
+    "storejs": "^2.0.0",
+    "tonal-dictionary": "^2.2.2",
+    "tonal-note": "^2.2.2",
+    "tonal-scale": "^2.2.2",
+    "typeface-open-sans-condensed": "^1.1.13",
+    "underscore": "^1.13.1",
+    "webmidi": "^2.5.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^1.0.1",
+    "vite": "^2.5.10"
+  }
+}

@@ -1,0 +1,268 @@
+import React, {useState} from 'react';
+import {observer} from "mobx-react-lite";
+import {stores} from "../stores";
+import {CONTROLS_DATA} from "../pacer/sysex";
+import {ControlSelector} from "../components/ControlSelector";
+import {CONTROLS_FULLNAME, TARGET_PRESET} from "../pacer/constants";
+import {setAutoFreeze} from "immer";
+import {ControlStepsEditor} from "../components/ControlStepsEditor";
+// import Dropzone from "react-dropzone";
+import {ControlModeEditor} from "../components/ControlModeEditor";
+import {PresetNameEditor} from "../components/PresetNameEditor";
+// import {dropOverlayStyle, isVal} from "../utils/misc";
+import {isVal} from "../utils/misc";
+import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
+// import UpdateMessages from "../components/UpdateMessages";
+import {presetIndexToXY} from "../pacer/utils";
+import {PresetOverview} from "../components/PresetsOverview";
+import Switch from "react-switch";
+import "./Preset.css";
+
+//FIXME: fix this:
+setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
+
+export const Preset = observer(() => {
+
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         // dropZoneActive: false,
+    //         copyPresetFrom: "-1",
+    //     };
+    // }
+
+    const [copyPresetFrom, setCopyPresetFrom] = useState("-1");
+
+/*
+    onDragEnter = () => {
+        this.setState({
+            dropZoneActive: true
+        });
+    };
+
+    onDragLeave= () => {
+        this.setState({
+            dropZoneActive: false
+        });
+    };
+
+    onDrop = (files) => {
+        // stores.state.clear();
+        stores.state.changed = true;
+        this.setState(
+            { dropZoneActive: false },
+            () => { stores.state.readFiles(files) }   // returned promise from readFiles() is ignored, this is normal.
+        );
+    };
+*/
+
+    /**
+     * dataIndex is only used when dataType == "data"
+     */
+    function updateControlMode(controlId, value) {
+        stores.state.setControlMode(parseInt(value, 10))
+    }
+
+    function doCopyPresetFrom(presetIdFrom, presetIdTo) {
+        //FIXME: use immerjs
+/*
+        const { data, updateMessages } = this.state;
+
+        if (data && data[TARGET_PRESET][presetIdFrom]) {
+
+            if (!data[TARGET_PRESET][presetIdTo]) data[TARGET_PRESET][presetIdTo] = {};
+            data[TARGET_PRESET][presetIdTo]["changed"] = true;
+
+            if (!updateMessages.hasOwnProperty(presetIdTo)) updateMessages[presetIdTo] = {};
+            if (!updateMessages[presetIdTo].hasOwnProperty(CONTROLS_DATA)) updateMessages[presetIdTo][CONTROLS_DATA] = {};
+
+            //
+            // Only copy CONTROLS (for the current version)
+            //
+            //FIXME: copy EXP and FS config
+            CONTROLS_WITH_SEQUENCE.forEach(controlId => {
+                // data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = Object.assign({}, data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]);
+                // ugly / deep copy without shallow references:
+                data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = JSON.parse(JSON.stringify(data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]));
+                updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, data, true);
+            });
+            // Object.assign(data[TARGET_PRESET][presetIdTo], data[TARGET_PRESET][presetIdFrom]);
+
+            //we do not copy the name
+            //updateMessages[presetIdTo]["name"] = buildPresetNameSysex(presetIdTo, data);
+
+            // CONTROLS_WITH_SEQUENCE.forEach(controlId => updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, data, true));
+
+            this.setState({data, updateMessages, changed: true});
+        }
+*/
+    }
+
+    // render() {
+
+        // console.log("stores.state.currentControl", stores.state.currentControl);
+
+        const presetIndex = stores.state.currentPresetIndex;
+        const controlId = stores.state.currentControl;  // ? stores.state.currentControl : 1;
+        const data = stores.state.data;
+
+        const showEditor =
+            isVal(presetIndex) &&
+            data &&
+            (TARGET_PRESET in data) &&
+            (presetIndex in data[TARGET_PRESET]) &&
+            (CONTROLS_DATA in data[TARGET_PRESET][presetIndex]) &&
+            (controlId in data[TARGET_PRESET][presetIndex][CONTROLS_DATA]) &&
+            ("steps" in data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]) &&
+            (Object.keys(data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"]).length === 6);
+
+/*
+        let presetLabel = "";
+        if (data &&
+            (TARGET_PRESET in data) &&
+            (presetIndex in data[TARGET_PRESET]) &&
+            ("name" in data[TARGET_PRESET][presetIndex])) {
+            presetLabel = presetIndexToXY(presetIndex) + ": " + data[TARGET_PRESET][presetIndex]["name"];
+        }
+*/
+
+        // const showControls = isVal(presetIndex);
+
+        return (
+/*
+            <Dropzone
+                disableClick
+                style={{position: "relative"}}
+                onDrop={this.onDrop}
+                onDragEnter={this.onDragEnter}
+                onDragLeave={this.onDragLeave}>
+
+                {this.stores.state.dropZoneActive &&
+                <div style={dropOverlayStyle}>
+                    Drop sysex file...
+                </div>}
+*/
+
+                <div className="wrapper">
+                    <div className="content preset-editor">
+
+                        <PresetSelectorAndButtons showClearButton={false} />
+
+                        {/*<LoadFactoryDefaultsButton />*/}
+
+                        {data && data[TARGET_PRESET][presetIndex] &&
+                        <div className="content-row-content">
+                            {/*<h2>Preset {presetLabel}</h2>*/}
+                            <h3 className="preset-title">
+                                {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold"> {data[TARGET_PRESET][presetIndex]["name"]}</span>
+                            </h3>
+                            <PresetNameEditor />
+                        </div>}
+
+                        {data && data[TARGET_PRESET][presetIndex] &&
+                        <div className="row align-center mt-20">
+                            <div className="edit-section-title">Controls:</div>
+                            <Switch onChange={(checked) => stores.state.setDetailView(checked)} checked={stores.state.detailView}
+                                    width={48} height={20} className="ml-30 mr-10" />
+                            show details
+
+                            {/*<button className="btn-small ml-20" onClick={() => stores.state.toggleDetailView()}>{stores.state.detailView ? 'simple selectors' : 'detailed selectors'}</button>*/}
+                        </div>}
+
+                        {data && data[TARGET_PRESET][presetIndex] &&
+                        <div className="content-row-content">
+
+                            {/*{isVal(presetIndex) && data && data[TARGET_PRESET][presetIndex] &&*/}
+                            {/*<div class="detail-view">*/}
+{/*
+                                <div className="row align-baseline">
+                                    <h3 className="mr-20">Preset {presetIndexToXY(presetIndex)} detailed view:</h3>
+                                    <button className="btn-small" onClick={() => stores.state.toggleDetailView()}>{stores.state.detailView ? 'hide' : 'show'}</button>
+                                </div>
+*/}
+                            {/*</div>}*/}
+
+                            {stores.state.detailView &&
+                            <div className="detail-view">
+                                <PresetOverview key={presetIndex} index={presetIndex} data={data[TARGET_PRESET][presetIndex]}
+                                                title={false} hexDisplay={false} extControls={true} midi={false} />
+                            </div>}
+
+                            {/*<Fragment>*/}
+                                {/*<h2>Controls for preset {presetLabel}</h2>*/}
+                            {!stores.state.detailView && isVal(presetIndex) && <ControlSelector />}
+
+{/*
+                                {data && presetIndex in data[TARGET_PRESET] && Object.keys(data[TARGET_PRESET]).length > 1 &&
+                                <Fragment>
+                                    (experimental) <button onClick={() => this.copyPresetFrom(this.stores.state.copyPresetFrom, presetIndex)}>copy</button> from preset <select value={this.stores.state.copyPresetFrom} onChange={(event) => this.setState({copyPresetFrom: event.target.value})}>
+                                        <option value="">-</option>
+                                    {
+                                        Object.keys(data[TARGET_PRESET]).map((key, index) => {
+                                            if (data[TARGET_PRESET][key]) {
+                                                return (<option key={index} value={key}>{presetIndexToXY(key)} {data[TARGET_PRESET][key].name}</option>);
+                                            } else {
+                                                return null;
+                                            }
+                                        })
+                                    }
+                                    </select> <span className="small">(copy the configuration for the footswitches A..D and 1..6 only)</span>
+                                </Fragment>
+                                }
+*/}
+
+                                {showEditor && <div className="edit-section-title control-name border-b">
+                                    {CONTROLS_FULLNAME[controlId]}:
+                                </div>}
+
+                                {showEditor &&
+                                <ControlModeEditor
+                                    controlId={controlId}
+                                    mode={data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["control_mode"]}
+                                    onUpdate={(value) => updateControlMode(controlId, value)}/>}
+
+                                {showEditor &&
+                                <ControlStepsEditor presetIndex={presetIndex} controlId={controlId} />}
+
+                                {!showEditor &&
+                                <div className="mt-10 mb10">
+                                    Select a control above to edit its configuration.
+                                </div>}
+
+                                {!isVal(presetIndex) && <div className="please">Select a preset.</div>}
+
+                            {/*</Fragment>*/}
+                        </div>}
+
+                        {stores.state.changed && stores.midi.outputInUse &&         // FIXME: midiConnected(output) &&
+                        <div className="content-row-content mt-20 menu-buttons">
+                            <button className="action-button update" onClick={() => stores.state.updatePacer()}>Update Pacer</button>
+                        </div>}
+
+                        {/* this.props.debug && stores.state.changed &&
+                        <div className="content-row-content">
+                            <div className="debug">
+                                <h4>[Debug] Update messages to send:</h4>
+                                <div className="dump code">
+                                </div>
+                            </div>
+                        </div> */}
+
+{/*
+                        <div className="content-row-content">
+                            <UpdateMessages/>
+                        </div>
+*/}
+
+                    </div>
+
+                </div>
+
+            // </Dropzone>
+
+        );
+    // }
+
+});
+
+// export default inject('state')(observer(Preset));

@@ -1,0 +1,35 @@
+.footer {
+    margin-top: 30px;
+    padding: 5px 0;
+    /*background-color: #333;*/
+    border-top: 1px solid #aaa;
+    width: 100%;
+    /*text-align: center;*/
+    color: #999;
+    font-size: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    /*flex-direction: row;*/
+    /*flex-grow: 1;*/
+}
+
+.footer .gh {
+    /*flex-grow: 10;*/
+    float: right;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    /*opacity: 0.5;*/
+    /*color: #222;*/
+}
+
+.footer a {
+    fill: #7777ff;
+    color: #7777ff;
+}
+
+.footer svg {
+    margin: 0 0 0 10px;
+    /*fill: blue;*/
+}
+

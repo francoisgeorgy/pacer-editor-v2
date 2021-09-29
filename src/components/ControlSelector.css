@@ -1,0 +1,41 @@
+
+.controls {
+    margin: 10px 0 20px 0;
+    display: grid;
+    grid: repeat(3, 1fr) / repeat(6, auto);
+    justify-content: start;
+    grid-column-gap: 4px;
+    grid-row-gap: 10px;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.controls > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*background-color: #f4f4f4;*/
+    width: 60px;
+    margin-right: 4px;
+    padding: 4px 2px;
+    cursor: pointer;
+    /*border: 1px solid #eeeeee;*/
+}
+
+/*
+.controls > div:hover {
+    background-color: lightblue;
+    border: 1px solid #aaa;
+}
+*/
+
+/*
+.controls > div.selected {
+    background-color: orange;       !* present selected color overrides preset hover color *!
+    border: 1px solid red;
+}
+*/
+
+.controls > div.no-control {
+    background-color: transparent;
+}

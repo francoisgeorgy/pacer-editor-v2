@@ -1,0 +1,44 @@
+.dump {
+    margin-top: 16px;
+    /*font-family: "Andale Mono", AndaleMono, "Consolas", monospace;*/
+    /*font-size: 0.8rem;*/
+    white-space: pre;
+}
+
+/*.instructions {*/
+    /*margin-top: 8px;*/
+/*}*/
+
+.data {
+    margin: 0.5rem 0 16px;
+    font-family: Courier New, Courier, monospace;
+}
+
+.dump-preset-name {
+    margin: 16px 0;
+}
+
+.dump-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.dump-control table {
+    border-collapse: collapse;
+    margin-right: 16px;
+    margin-bottom: 16px;
+}
+
+.dump-control th,
+.dump-control td {
+    border: 1px solid #aaa;
+    padding: 6px 6px 2px 6px;
+    text-align: left;
+}
+
+.dump-control td.name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding-top: 4px;
+}

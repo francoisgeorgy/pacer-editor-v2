@@ -1,0 +1,52 @@
+
+/*h2 {*/
+    /*margin-top: 0;*/
+    /*margin-bottom: 0.25rem*/
+/*}*/
+
+.selectors {
+    display: flex;
+    flex-direction: row;
+}
+
+.messages-to-send {
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+.update-messages-title {
+    margin-bottom: 10px;
+}
+
+.actions {
+    /*margin-top: 20px;*/
+}
+
+.detail-view {
+    /*margin-top: 20px;*/
+    /*border-top: 1px solid #aaa;*/
+    /*padding: 10px;*/
+    /*background-color: #f0f0f0;*/
+}
+
+.detail-view h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    /*font-weight: bold;*/
+}
+
+h3.controls-label {
+    font-weight: bold;
+    /*margin: 20px 0 0 0;*/
+}
+
+h3.control-name {
+    font-weight: bold;
+    margin: 20px 0 10px 0;
+}
+
+.edit-section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+}

@@ -1,0 +1,54 @@
+.control-editor {
+
+}
+
+.steps select, .steps input {
+    min-width: 64px;
+}
+
+.steps input {
+    width: 64px;
+}
+
+.steps {
+    display: grid;
+    grid: repeat(6, 1fr) / repeat(10, auto);
+    justify-content: start;
+    grid-gap: 5px 10px;
+    /*margin-top: 24px;*/
+}
+
+.steps > div {
+    justify-self: end;
+}
+
+.steps > div.step-col-header {
+    justify-self: start;
+}
+
+.steps input[type='text'] {
+    padding: 0 4px;
+    text-align: right;
+}
+
+.step-row-header {
+    font-weight: bold;
+}
+
+.step-col-header {
+    align-self: center;
+    /*padding-left: 7px;*/
+    font-weight: bold;
+}
+
+.data-help {
+    /*font-size: 0.66rem;*/
+    font-size: 0.85rem;
+    text-align: right;
+    color: #665;
+    margin-top: 1px;
+}
+
+select.notes option {
+    text-align: justify-all;
+}
