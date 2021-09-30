@@ -42,12 +42,16 @@ export const fromHexString = function(string, sep) {
     return a;
 };
 
-export const toHexDump = function(data, width = 16) {
+export const toHexDump = function(data, width = 16, header=true) {
     let s = [];
     if (!data || data.length < 1) return s;
     let i = 0;
     do {
-        s.push(`${padZero(i.toString(width), 8)}: ${hs(data.slice(i, i+width))}`);
+        if (header) {
+            s.push(`${padZero(i.toString(width), 8)}: ${hs(data.slice(i, i+width))}`);
+        } else {
+            s.push(`${hs(data.slice(i, i+width))}`);
+        }
         i+= width;
     } while (i < data.length);
     return s;

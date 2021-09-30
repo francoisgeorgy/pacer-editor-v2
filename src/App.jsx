@@ -7,14 +7,13 @@ import {Preset} from "./pages/Preset";
 import {Footer} from "./components/Footer";
 import {PresetMidi} from "./pages/PresetMidi";
 import {Overview} from "./pages/Overview";
-import {ANY_MIDI_PORT, PACER_MIDI_PORT_NAME} from "./pacer/constants";
 import {BusyIndicator} from "./components/BusyIndicator";
-import * as QueryString from "query-string";
-import {Patch} from "./pages/Patch";
+import {ImportExport} from "./pages/ImportExport";
 import {MenuButtons} from "./components/MenuButtons";
-import {MidiPortsSelect} from "./midi/MidiPortsSelect";
-import './App.css';
 import {MidiSupportWarning} from "./midi/MidiSupportWarning";
+import {MidiPortsSelect} from "./midi/MidiPortsSelect";
+import * as QueryString from "query-string";
+import './App.css';
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -91,7 +90,7 @@ export const App = observer((props) => {
                                 <Route exact={true} path="/" render={(props) => <Overview debug={debug}/>} />
                                 <Route path="/preset"        render={(props) => <Preset debug={debug}/>} />
                                 <Route path="/presetmidi"    render={(props) => <PresetMidi debug={debug} />} />
-                                <Route path="/patch"         render={(props) => <Patch debug={debug} />} />
+                                <Route path="/patch"         render={(props) => <ImportExport debug={debug} />} />
                                 {/*{debug && <Route path="/dumpdecoder" render={props => <DumpDecoder debug={debug}/>} />}*/}
                                 {/*{debug && <Route path="/debug"       render={props => <Debug debug={debug} />} />}*/}
                                 <Route exact={true} path="/help"     render={(props) => <Home />} />

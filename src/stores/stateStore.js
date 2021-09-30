@@ -1,7 +1,7 @@
 import {computed, action, makeAutoObservable, observable} from "mobx";
 import {MSG_CTRL_OFF, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
 import {
-    buildPresetNameSysex,
+    getPresetNameSysexMessages,
     CONTROLS_DATA,
     FULL_DUMP_EXPECTED_BYTES,
     getBytesIndex,
@@ -373,6 +373,7 @@ export class StateStore {
     setControlMode(value) {
         this.data[TARGET_PRESET][this.currentPresetIndex][CONTROLS_DATA][this.currentControl]["control_mode"] = value;
         this.data[TARGET_PRESET][this.currentPresetIndex][CONTROLS_DATA][this.currentControl]["control_mode_changed"] = true;
+        //TODO: if external control, set withLed = false
         this.addControlUpdateMessage(this.currentControl, getControlUpdateSysexMessages(this.currentPresetIndex, this.currentControl, this.data));
         this.changed = true;
     }
@@ -403,7 +404,7 @@ export class StateStore {
         if (!this.updateMessages.hasOwnProperty(presetIndex)) this.updateMessages[presetIndex] = {};
         if (!this.updateMessages[presetIndex].hasOwnProperty("name")) this.updateMessages[presetIndex]["name"] = {};
 
-        this.updateMessages[presetIndex]["name"]["dummy"] = buildPresetNameSysex(presetIndex, this.data);
+        this.updateMessages[presetIndex]["name"]["dummy"] = getPresetNameSysexMessages(presetIndex, this.data);
 
         this.changed = true;
     }
@@ -608,7 +609,7 @@ export class StateStore {
     }
 
     updatePacer() {
-        //FIXME: externalize this method
+        //TODO: externalize this method
 
         this.showBusy({busy: true, busyMessage: "write Preset..."});
 
@@ -630,7 +631,7 @@ export class StateStore {
             }
         );
 
-        //FIXME: update this code
+        //TODO: update this code
         setTimeout(
             () => {
                 this.changed = false;

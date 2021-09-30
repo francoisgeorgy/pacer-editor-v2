@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@vitejs/plugin-react': ^1.0.1
+  file-saver: ^2.0.5
   immer: ^9.0.6
   midi-manufacturers: ^1.1.0
   mobx: ^6.3.3
@@ -25,6 +26,7 @@ specifiers:
   webmidi: ^2.5.3
 
 dependencies:
+  file-saver: 2.0.5
   immer: 9.0.6
   midi-manufacturers: 1.1.0
   mobx: 6.3.3
@@ -455,6 +457,10 @@ packages:
   /estree-walker/2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
     dev: true
+
+  /file-saver/2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
+    dev: false
 
   /file-selector/0.2.4:
     resolution: {integrity: sha512-ZDsQNbrv6qRi1YTDOEWzf5J2KjZ9KMI1Q2SGeTkCJmNNW25Jg4TW4UMcmoqcg4WrAyKRcpBXdbWRxkfrOzVRbA==}

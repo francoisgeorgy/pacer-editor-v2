@@ -5,6 +5,5 @@ dist-ssr
 *.local
 tmp
 .idea
-
-# Project exclude paths
+/dumps
 /discarded/

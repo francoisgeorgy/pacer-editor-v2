@@ -13,11 +13,14 @@ import {
     CONTROL_STOMPSWITCH_1,
     CONTROL_STOMPSWITCH_6,
     CONTROL_STOMPSWITCH_A,
-    CONTROLS,
-    SYSEX_HEADER, TARGET_BACKUP, TARGET_GLOBAL,
+    CONTROLS, EXPPEDALS, FOOTSWITCHES, STOMPSWITCHES_BOTTOM, STOMPSWITCHES_TOP,
+    SYSEX_HEADER, SYSEX_SIGNATURE, TARGET_BACKUP, TARGET_GLOBAL,
     TARGET_PRESET,
     TARGETS
 } from "./constants";
+import {stores} from "../stores";
+import React from "react";
+import {PresetOverview} from "../components/PresetsOverview";
 
 export const SINGLE_PRESET_EXPECTED_BYTES = 5546;
 // export const ALL_PRESETS_EXPECTED_BYTES = -1;
@@ -637,7 +640,7 @@ export function requestPreset(presetIndex) {
     let msg = [
         COMMAND_GET,
         TARGET_PRESET,
-        presetIndex,
+        parseInt(presetIndex, 10),
         CONTROL_ALL
     ];
     let cs = checksum(msg);
@@ -656,13 +659,35 @@ export function requestPresetObj(presetIndex, controlId) {
     let msg = [
         COMMAND_GET,
         TARGET_PRESET,
-        presetIndex,      // preset #
-        controlId         // (control)
+        parseInt(presetIndex, 10),
+        parseInt(controlId, 10)
     ];
     let cs = checksum(msg);
     msg.push(cs);
     return SYSEX_HEADER.concat(msg);
 }
+
+
+function buildSysexMessage(data, complete=false) {
+
+    let msg = [];
+    if (complete) {
+        msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
+    }
+
+    msg.push(
+        ...SYSEX_HEADER,
+        ...data,
+        checksum(data)
+    );
+
+    if (complete) {
+        msg.push(SYSEX_END);
+    }
+
+    return msg;
+}
+
 
 /**
  * Return an array of sysex messages to update a control's steps.
@@ -671,7 +696,7 @@ export function requestPresetObj(presetIndex, controlId) {
  * @param steps
  * @returns {*}
  */
-function buildControlStepSysex(presetIndex, controlId, steps, forceUpdate = false) {
+function getControlStepSysexMessages(presetIndex, controlId, steps, forceUpdate = false, complete = false) {
 
     let msgs = [];
 
@@ -681,20 +706,26 @@ function buildControlStepSysex(presetIndex, controlId, steps, forceUpdate = fals
 
         if (!forceUpdate && !step.changed) continue;
 
-        // start with command and target:
-        let msg = [
+        let msg = [];
+        // if (complete) {
+        //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
+        // }
+
+        msg.push(
+            // ...SYSEX_HEADER,
             COMMAND_SET,
             TARGET_PRESET,
-            presetIndex,
-            controlId];
+            parseInt(presetIndex, 10),
+            parseInt(controlId, 10)
+        );
 
         // add data:
-        msg.push((i-1)*6 + 1, 1, step.channel, 0x00);
-        msg.push((i-1)*6 + 2, 1, step.msg_type, 0x00);
-        msg.push((i-1)*6 + 3, 1, step.data[0], 0x00);
-        msg.push((i-1)*6 + 4, 1, step.data[1], 0x00);
-        msg.push((i-1)*6 + 5, 1, step.data[2], 0x00);
-        msg.push((i-1)*6 + 6, 1, step.active);
+        msg.push((i-1)*6 + 1, 1, step.channel ?? 0, 0x00);
+        msg.push((i-1)*6 + 2, 1, step.msg_type ?? 0, 0x00);
+        msg.push((i-1)*6 + 3, 1, step.data[0] ?? 0, 0x00);
+        msg.push((i-1)*6 + 4, 1, step.data[1] ?? 0, 0x00);
+        msg.push((i-1)*6 + 5, 1, step.data[2] ?? 0, 0x00);
+        msg.push((i-1)*6 + 6, 1, step.active ?? 0);
 
         // LED
 /*
@@ -705,10 +736,14 @@ function buildControlStepSysex(presetIndex, controlId, steps, forceUpdate = fals
 */
 
         // add checksum:
-        msg.push(checksum(msg));
+        // msg.push(checksum(msg));
 
         // inject header and add to list of messages:
-        msgs.push(SYSEX_HEADER.concat(msg));
+        // msgs.push(SYSEX_HEADER.concat(msg));
+        // if (complete) {
+        //     msg.push(SYSEX_END);
+        // }
+        msgs.push(buildSysexMessage(msg, complete));
     }
 
     // msgs.map(m => console.log("buildControlStepSysex", hs(m)));
@@ -716,7 +751,17 @@ function buildControlStepSysex(presetIndex, controlId, steps, forceUpdate = fals
     return msgs;
 }
 
-function buildControlStepLedSysex(presetIndex, controlId, steps, forceUpdate = false) {
+function getControlStepLedSysexMessages(presetIndex, controlId, steps, forceUpdate = false, complete = false) {
+
+    // STEPS:
+    // {"1": {"channel":0,"msg_type":70,"data":[0,0,127],"active":1},
+    //  "2": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
+    //  "3": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
+    //  "4": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
+    //  "5": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
+    //  "6": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0}}
+
+    // console.log("getControlStepLedSysexMessages", JSON.stringify(steps));
 
     let msgs = [];
 
@@ -724,35 +769,41 @@ function buildControlStepLedSysex(presetIndex, controlId, steps, forceUpdate = f
 
         let step = steps[i];
 
+        // console.log("step", i, presetIndex, controlId, step);
+
         if (!forceUpdate && !step.led_changed) continue;
 
+        let msg = [];
+        // if (complete) {
+        //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
+        // }
+
         // start with command and target:
-        let msg = [
+        msg.push(
+            // ...SYSEX_HEADER,
             COMMAND_SET,
             TARGET_PRESET,
-            presetIndex,
-            controlId];
-
-        // add data:
-        // msg.push((i-1)*6 + 1, 1, step.channel, 0x00);
-        // msg.push((i-1)*6 + 2, 1, step.msg_type, 0x00);
-        // msg.push((i-1)*6 + 3, 1, step.data[0], 0x00);
-        // msg.push((i-1)*6 + 4, 1, step.data[1], 0x00);
-        // msg.push((i-1)*6 + 5, 1, step.data[2], 0x00);
-        // msg.push((i-1)*6 + 6, 1, step.active);
+            parseInt(presetIndex, 10),
+            parseInt(controlId, 10)
+        );
 
         // LED
-        msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl, 0x00);
-        msg.push((i-1)*4 + 0x41, 1, step.led_active_color, 0x00);
-        msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color, 0x00);
+        msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl ?? 0, 0x00);
+        msg.push((i-1)*4 + 0x41, 1, step.led_active_color ?? 0, 0x00);
+        msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color ?? 0, 0x00);
         // msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
-        msg.push((i-1)*4 + 0x43, 1, step.led_num);
+        msg.push((i-1)*4 + 0x43, 1, step.led_num ?? 0);
 
         // add checksum:
-        msg.push(checksum(msg));
+        // msg.push(checksum(msg));
 
         // inject header and add to list of messages:
-        msgs.push(SYSEX_HEADER.concat(msg));
+        // msgs.push(SYSEX_HEADER.concat(msg));
+        // if (complete) {
+        //     msg.push(SYSEX_END);
+        // }
+        // msgs.push(msg);
+        msgs.push(buildSysexMessage(msg, complete));
     }
 
     return msgs;
@@ -765,26 +816,38 @@ function buildControlStepLedSysex(presetIndex, controlId, steps, forceUpdate = f
  * @param mode
  * @returns {number[]}
  */
-function buildControlModeSysex(presetIndex, controlId, mode, forceUpdate = false) {
+function getControlModeSysexMessages(presetIndex, controlId, mode, forceUpdate = false, complete = false) {
 
     if (!forceUpdate && !mode.control_mode_changed) return [];   // order important because "control_mode_change" could be undefined
 
+    let msg = [];
+    // if (complete) {
+    //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
+    // }
+
     // start with command and target:
-    let msg = [
+    msg.push(
+        // ...SYSEX_HEADER,
         COMMAND_SET,
         TARGET_PRESET,
-        presetIndex,
-        controlId,
+        parseInt(presetIndex, 10),
+        parseInt(controlId, 10),
         CONTROL_MODE_ELEMENT,
         0x01,   // 1 byte of data
-        mode["control_mode"]
-    ];
+        mode["control_mode"] ?? 0
+    );
 
     // add checksum:
-    msg.push(checksum(msg));
+    // msg.push(checksum(msg));
 
     // inject header and return the result:
-    return [SYSEX_HEADER.concat(msg)];  // we need to return an array of messages, even if it'sonly one message
+    // return [SYSEX_HEADER.concat(msg)];  // we need to return an array of messages, even if it's only one message
+    // if (complete) {
+    //     msg.push(SYSEX_END);
+    // }
+
+    // return [msg];
+    return [buildSysexMessage(msg, complete)];
 }
 
 /**
@@ -797,15 +860,23 @@ function buildControlModeSysex(presetIndex, controlId, mode, forceUpdate = false
  * @param forceUpdate
  * @returns {*}
  */
-function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate = false) {
-    return [
-        ...buildControlModeSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId], forceUpdate)  ,
-        ...buildControlStepSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate),
-        ...buildControlStepLedSysex(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate)
-    ];
+function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate = false, complete = false) {
+    const leds = !(FOOTSWITCHES.includes(controlId) || EXPPEDALS.includes(controlId));
+    if (leds) {
+        return [
+            ...getControlModeSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId], forceUpdate, complete),
+            ...getControlStepSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate, complete),
+            ...getControlStepLedSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate, complete)
+        ];
+    } else {
+        return [
+            ...getControlModeSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId], forceUpdate, complete),
+            ...getControlStepSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate, complete)
+        ];
+    }
 }
 
-function buildMidiSettingsSysex(presetIndex, settings, forceUpdate = false) {
+function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false, complete = false) {
 
     let msgs = [];
 
@@ -815,64 +886,84 @@ function buildMidiSettingsSysex(presetIndex, settings, forceUpdate = false) {
 
         if (!setting.changed && !forceUpdate) continue;
 
-        // start with command and target:
-        let msg = [
+        let msg = [];
+        // if (complete) {
+        //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
+        // }
+
+        msg.push(
+            // ...SYSEX_HEADER,
             COMMAND_SET,
             TARGET_PRESET,
-            presetIndex,
-            CONTROL_MIDI];
+            parseInt(presetIndex, 10),
+            CONTROL_MIDI
+        );
 
         // add data:
-        msg.push((i-1)*6 + 1, 1, setting.channel, 0x00);
-        msg.push((i-1)*6 + 2, 1, setting.msg_type, 0x00);
-        msg.push((i-1)*6 + 3, 1, setting.data[0], 0x00);
-        msg.push((i-1)*6 + 4, 1, setting.data[1], 0x00);
-        msg.push((i-1)*6 + 5, 1, setting.data[2], 0x00);
-        msg.push((i-1)*6 + 6, 1, setting.active);
+        msg.push((i-1)*6 + 1, 1, setting.channel ?? 0, 0x00);
+        msg.push((i-1)*6 + 2, 1, setting.msg_type ?? 0, 0x00);
+        msg.push((i-1)*6 + 3, 1, setting.data[0] ?? 0, 0x00);
+        msg.push((i-1)*6 + 4, 1, setting.data[1] ?? 0, 0x00);
+        msg.push((i-1)*6 + 5, 1, setting.data[2] ?? 0, 0x00);
+        msg.push((i-1)*6 + 6, 1, setting.active ?? 0);
 
         // add checksum:
-        msg.push(checksum(msg));
+        // msg.push(checksum(msg));
 
         // inject header and add to list of messages:
-        msgs.push(SYSEX_HEADER.concat(msg));
+        //msgs.push(SYSEX_HEADER.concat(msg));
+
+        // if (complete) {
+        //     SYSEX_HEADER.concat(msg)
+        //     msg.push(SYSEX_END);
+        // }
+        msgs.push(buildSysexMessage(msg, complete));
     }
 
     return msgs;
 }
 
 
-function buildPresetNameSysex(presetIndex, data) {
+function getPresetNameSysexMessages(presetIndex, data, complete=false) {
 
-    // start with command and target:
-    let msg = [
+    let msgData = [
         COMMAND_SET,
         TARGET_PRESET,
-        presetIndex,
+        parseInt(presetIndex, 10),
         CONTROL_NAME,
-        0x00            // when setting the name this byte can be anything
+        0x01            // when setting the name this byte can be anything
     ];
 
     const s = data[TARGET_PRESET][presetIndex]["name"];
-
-    // add data:
-    msg.push(s.length);
-
+    msgData.push(s.length);
     for (let i=0; i < s.length; i++) {
-        msg.push(s.charCodeAt(i));
+        msgData.push(s.charCodeAt(i));
     }
 
-    // add checksum:
-    msg.push(checksum(msg));
-
-    // inject header and return result:
-    return [SYSEX_HEADER.concat(msg)];  // we need to return an array of messages, even if it'sonly one message
+    return [buildSysexMessage(msgData, complete)];
 }
 
 
-function getMidiSettingUpdateSysexMessages(presetIndex, data) {
-    return buildMidiSettingsSysex(presetIndex, data[TARGET_PRESET][presetIndex]["midi"]);
+function getMidiSettingUpdateSysexMessages(presetIndex, data, complete=false) {
+    return getMidiSettingsSysexMessages(presetIndex, data[TARGET_PRESET][presetIndex]["midi"], complete);
 }
 
+
+export function getFullNonGlobalConfigSysex(data, fullSysex = false) {
+    const msgs = [];
+    Object.keys(data[TARGET_PRESET])
+        .filter(presetIndex => (stores.state.overviewSelection.length < 1) || stores.state.overviewSelection.includes(presetIndex))
+        .forEach(presetIndex => {
+            msgs.push(...getPresetNameSysexMessages(presetIndex, data, fullSysex));
+            STOMPSWITCHES_BOTTOM.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+            STOMPSWITCHES_TOP.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+            FOOTSWITCHES.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+            EXPPEDALS.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+            msgs.push(...getMidiSettingUpdateSysexMessages(presetIndex, data, fullSysex));
+        });
+    console.log("getFullNonGlobalConfigSysex", msgs);
+    return msgs;
+}
 
 export {
     getBytesIndex,
@@ -880,7 +971,7 @@ export {
     parseSysexDump,
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
-    buildPresetNameSysex,
+    getPresetNameSysexMessages,
     splitDump
 };
 

@@ -11,9 +11,8 @@ export const LoadFactoryDefaultsButton = observer(() => {
         // console.log("data", data);
         stores.state.data = mergeDeep(parseSysexDump(data));
         stores.state.storeBytes(data);
-    };
+    }
 
-/*
     loadFactoryDefaults = async () => {
 
         let response = await fetch("patches/factory-defaults.syx");
@@ -49,7 +48,6 @@ export const LoadFactoryDefaultsButton = observer(() => {
             //     console.log("readFiles: not a sysfile", hs(data.slice(0, 5)));
         }
     };
-*/
 
         // const data = stores.state.data;
         // if (data) return null;

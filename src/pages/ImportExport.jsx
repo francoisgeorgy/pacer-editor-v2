@@ -2,14 +2,14 @@ import React, {useRef, useState} from 'react';
 import {stores} from "../stores";
 import {TARGET_PRESET} from "../pacer/constants";
 import {presetIndexToXY} from "../pacer/utils";
-// import Dropzone from "react-dropzone";
-// import {dropOverlayStyle} from "../utils/misc";
 import {observer} from "mobx-react-lite";
 import {BusyIndicator} from "../components/BusyIndicator";
 import {DownloadAllPresets} from "../components/DownloadAllPresets";
-import "./Patch.css";
+import "./ImportExport.css";
+import {getFullNonGlobalConfigSysex} from "../pacer/sysex";
+import {DownloadHex} from "../components/DownloadHex";
 
-export const Patch = observer(() => {
+export const ImportExport = observer(() => {
 // class Patch extends Component {
 
     // constructor(props) {
@@ -82,6 +82,8 @@ export const Patch = observer(() => {
         // const q =  QueryString.parse(window.location.search);
         // const debug = q.debug ? q.debug === '1' : false;
 
+    const [foo, setFoo] = useState(null);
+
         return (
 
 /*
@@ -116,17 +118,22 @@ export const Patch = observer(() => {
 
                             <div className="mt-10">
                                 <h3>Pacer &#x279C; save to file :</h3>
-                                {stores.state.connected &&
                                 <div>
-                                    {stores.state.connected && <button className="action-button Xread" onClick={() => stores.state.readFullDump()}>Read Pacer</button>}
+                                    {stores.state.connected && <button className="action-button Xread" onClick={() => stores.midi.readFullDump()}>Read Pacer</button>}
                                     <DownloadAllPresets />
+                                    <button onClick={() => setFoo(getFullNonGlobalConfigSysex(stores.state.data, true))}>getFullNonGlobalConfigSysex</button>
+                                    <DownloadHex data={() => getFullNonGlobalConfigSysex(stores.state.data, true)} filename={`pacer-patch`} addTimestamp={true} label="Save to file in text hex"/>
                                     <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
-                                </div>}
+                                </div>
+{/*
                                 {!stores.state.connected &&
                                 <div className="mb-15 italic">
                                     Pacer not connected.
                                 </div>}
+*/}
                             </div>
+
+                            <pre>{JSON.stringify(foo)}</pre>
 
                             <div className="mt-10">
                                 <h3>Read file &#x279C; Pacer :</h3>
