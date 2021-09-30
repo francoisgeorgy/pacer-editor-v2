@@ -1,25 +1,23 @@
 import React from "react";
-import { saveAs } from 'file-saver';
-import {hs, toHexDump} from "../utils/hexstring";
+import {saveAs} from 'file-saver';
 import {getTimestamp} from "../utils/misc";
 
-export const DownloadHex = ({data, filename, addTimestamp, className, label}) => {
+export const DownloadBin = ({data, filename, addTimestamp, className, label}) => {
 
     function handleClick(event) {
 
         const d = typeof data === 'function' ? data() : data;
 
-        // data must be an array of array of numbers
-
-        let text = '';
-        d.forEach(msg => text += hs(msg) + "\n");
+        let bytes = [];
+        d.forEach(msg => bytes.push(...msg));
 
         let fname = filename;
         if (addTimestamp) {
             fname += '.' + getTimestamp();
         }
+        fname += ".syx"
 
-        saveAs(new Blob([text], {type: "text/plain;charset=utf-8"}), fname + ".hex");
+        saveAs(new Blob([Uint8Array.from(bytes)], {type: "application/octet-stream"}), fname);
     }
 
     return (

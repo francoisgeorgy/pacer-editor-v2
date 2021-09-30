@@ -48,15 +48,12 @@ export function flatDeep(arr, d = 1) {
            arr.slice();
 }
 
-export const dropOverlayStyle = {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    paddingTop: '4rem',
-    background: 'rgba(0,0,0,0.4)',
-    textAlign: 'center',
-    color: '#fff',
-    fontSize: '4rem'
-};
+export function getTimestamp() {
+    const now = new Date();
+    return now.getUTCFullYear() + "-" +
+            ("0" + (now.getUTCMonth() + 1)).slice(-2) + "-" +
+            ("0" + now.getUTCDate()).slice(-2) + "-" +
+            ("0" + now.getUTCHours()).slice(-2) + "" +
+            ("0" + now.getUTCMinutes()).slice(-2) + "" +
+            ("0" + now.getUTCSeconds()).slice(-2);
+}

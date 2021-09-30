@@ -5,23 +5,15 @@ import {presetIndexToXY} from "../pacer/utils";
 import {observer} from "mobx-react-lite";
 import {BusyIndicator} from "../components/BusyIndicator";
 import {DownloadAllPresets} from "../components/DownloadAllPresets";
-import "./ImportExport.css";
 import {getFullNonGlobalConfigSysex} from "../pacer/sysex";
 import {DownloadHex} from "../components/DownloadHex";
+import "./ImportExport.css";
+import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
+import Switch from "react-switch";
+import {DownloadBin} from "../components/DownloadBin";
 
 export const ImportExport = observer(() => {
-// class Patch extends Component {
 
-    // constructor(props) {
-    //     super(props);
-    //     this.inputOpenFileRef = React.createRef();
-    //     this.state = {
-    //         dropZoneActive: false,
-    //         status: null
-    //     };
-    // }
-
-    // const [dropZoneActive, setDropZoneActive] = useState(false);
     const [status, setStatus] = useState(null);
     const inputOpenFileRef = useRef(null);
 
@@ -34,161 +26,96 @@ export const ImportExport = observer(() => {
         inputOpenFileRef.current.click();
     }
 
-    // function onDragEnter() {
-    //     setDropZoneActive(true);
-    //     // this.setState({
-    //     //     dropZoneActive: true
-    //     // });
-    // }
-    //
-    // function onDragLeave() {
-    //     setDropZoneActive(false);
-    //     // this.setState({
-    //     //     dropZoneActive: false
-    //     // });
-    // }
-
-    /**
-     * Drop Zone handler
-     * @param files
-     */
-    // function onDrop(files) {
-    //     setDropZoneActive(false);
-    //     stores.state.readFiles(files);
-    //     // this.setState(
-    //     //     {
-    //     //         dropZoneActive: false
-    //     //     },
-    //     //     () => {
-    //     //         //TODO
-    //     //         stores.state.readFiles(files);
-    //     //     }   // returned promise from readFiles() is ignored, this is normal.
-    //     // );
-    // }
-
     function sendDump() {
         stores.state.sendDump();
     }
 
-    // render() {
+    const data = stores.state.data;
 
-        // console.log("patch render");
+    return (
+        <div className="content">
 
-        // const { status } = this.state;
-        // const { status, dropZoneActive } = this.state;
-        // const output = stores.state.midi.output;
-        const data = stores.state.data;
+            <div className="mb-20">
+                <PresetSelectorAndButtons showClearButton={true} overview={true}
+                                          title="Import/Export presets"
+                                          subtitle="Select the presets to export:" />
+            </div>
 
-        // const q =  QueryString.parse(window.location.search);
-        // const debug = q.debug ? q.debug === '1' : false;
+            <div className="content-row-content first dump-wrapper">
 
-    const [foo, setFoo] = useState(null);
-
-        return (
-
-/*
-            <Dropzone
-                disableClick
-                style={{position: "relative"}}
-                onDrop={this.onDrop}
-                onDragEnter={this.onDragEnter}
-                onDragLeave={this.onDragLeave}>
-
-                {dropZoneActive &&
-                <div style={dropOverlayStyle}>
-                    Drop sysex file...
-                </div>}
-*/
-
-                <div className="wrapper">
-                    <div className="content">
-
-                        <div className="content-row-content first dump-wrapper">
-
-                            <h2>Import/Export presets</h2>
-
-                            <div className="">
-                                <p>
-                                    This page allows you to import/export all the Pacer presets, or a selection, at once.
-                                </p>
-                                <p>
-                                    The Global Config is not read or written by this tool.
-                                </p>
-                            </div>
-
-                            <div className="mt-10">
-                                <h3>Pacer &#x279C; save to file :</h3>
-                                <div>
-                                    {stores.state.connected && <button className="action-button Xread" onClick={() => stores.midi.readFullDump()}>Read Pacer</button>}
-                                    <DownloadAllPresets />
-                                    <button onClick={() => setFoo(getFullNonGlobalConfigSysex(stores.state.data, true))}>getFullNonGlobalConfigSysex</button>
-                                    <DownloadHex data={() => getFullNonGlobalConfigSysex(stores.state.data, true)} filename={`pacer-patch`} addTimestamp={true} label="Save to file in text hex"/>
-                                    <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
-                                </div>
-{/*
-                                {!stores.state.connected &&
-                                <div className="mb-15 italic">
-                                    Pacer not connected.
-                                </div>}
-*/}
-                            </div>
-
-                            <pre>{JSON.stringify(foo)}</pre>
-
-                            <div className="mt-10">
-                                <h3>Read file &#x279C; Pacer :</h3>
-                                <input ref={inputOpenFileRef} type="file" style={{display:"none"}} onChange={onChangeFile} />
-                                <button className="action-button" onClick={onInputFile}>Load sysex file</button>
-                                {data && stores.state.connected && <button className="action-button Xupdate" onClick={sendDump}>Send to Pacer</button>}
-                                {stores.state.sendProgress && <span>{stores.state.sendProgress}</span>}
-                            </div>
-
-                            <div className="mt-10">
-                                <h3>Data included in the dump:</h3>
-                                <p>
-                                    Presets marked "no data" are ignored and will not be sent to your Pacer or included in the sysex file.
-                                </p>
-                            </div>
-
-                            <div className="patch-content">
-                            {
-                                Array.from(Array(24+1).keys()).map(
-                                index => {
-                                    let id = presetIndexToXY(index);
-                                    let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
-                                    let name = show ? data[TARGET_PRESET][index]["name"] : "";
-
-                                    if (index === 0) return null;
-
-                                    return (
-                                        <div key={index}>
-                                            {/*<div className="right-align">{index}</div>*/}
-                                            <div>{id}</div>
-                                            {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
-                                        </div>
-                                    );
-                                })
-                            }
-                            </div>
-
-                            {status &&
-                            <div className={`status ${status.severity}`}>
-                                {status.message}
-                            </div>}
-
-                            {/* data && <div className="Xpreset-buttons">
-                                <button onClick={() => stores.state.clear()}>CLEAR DATA</button>
-                            </div> */}
-
-                        </div>
-
-                    </div>
-
+                <div className="">
+                    {/*<p>*/}
+                    {/*    This page allows you to import/export all the Pacer presets, or a selection, at once.*/}
+                    {/*</p>*/}
+                    <p>
+                        The Global Config is not included.
+                    </p>
                 </div>
 
-            // </Dropzone>
-        );
-    // }
-});
+                <div className="mt-20">
+                    <h3>Export to file :</h3>
+                </div>
+                <div className="mt-10">
+                    {/*{stores.midi.deviceConnected && <button className="action-button" onClick={() => stores.midi.readFullDump()}>Read Pacer</button>}*/}
+                    {/*<DownloadAllPresets />*/}
+                    {/*<button onClick={() => setFoo(getFullNonGlobalConfigSysex(data, true))}>getFullNonGlobalConfigSysex</button>*/}
+                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export"/>
+                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export ALL"/>
+                    <DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX"/>
+                    <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
+                </div>
 
-// export default inject('state')(observer(Patch));
+                <div className="mt-20">
+                    <h3>Import from file:</h3>
+                </div>
+                <div className="mt-10">
+                    <input ref={inputOpenFileRef} type="file" style={{display:"none"}} onChange={onChangeFile} />
+                    <div className="row align-center">
+                        <button className="action-button" onClick={onInputFile}>Load sysex file</button>
+                        <Switch onChange={(checked) => console.log(checked)} checked={false} width={48} height={20} className="mr-10 align-self-center" /> Clear the editor's data before importing.
+                    </div>
+                </div>
+{/*
+                    {data && stores.midi.deviceConnected && <button className="action-button" onClick={sendDump}>Send to Pacer</button>}
+                    {stores.state.sendProgress && <span>{stores.state.sendProgress}</span>}
+*/}
+                {/*</div>*/}
+
+{/*
+                <div className="mt-10">
+                    <h3>Data included in the dump:</h3>
+                    <p>
+                        Presets marked "no data" are ignored and will not be sent to your Pacer or included in the sysex file.
+                    </p>
+                </div>
+                <div className="patch-content">
+                {
+                    Array.from(Array(24+1).keys()).map(
+                    index => {
+                        let id = presetIndexToXY(index);
+                        let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
+                        let name = show ? data[TARGET_PRESET][index]["name"] : "";
+
+                        if (index === 0) return null;
+
+                        return (
+                            <div key={index}>
+                                <div className="right-align">{index}</div>
+                                <div>{id}</div>
+                                {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
+                            </div>
+                        );
+                    })
+                }
+                </div>
+*/}
+
+                {status &&
+                <div className={`status ${status.severity}`}>
+                    {status.message}
+                </div>}
+
+            </div>
+        </div>
+    );
+});

@@ -4,15 +4,16 @@ import {stores} from "../stores";
 import {PresetSelector} from "./PresetSelector";
 import {OverviewPresetSelector} from "./OverviewPresetSelector";
 
-export const PresetSelectorAndButtons = observer((props) => {
+export const PresetSelectorAndButtons = observer(({overview, showClearButton, title, subtitle}) => {
     return (
         <div className="content-row-content first mb-20">
-            <h2>Presets</h2>
+            <h2>{title || 'Presets'}</h2>
+            {subtitle && <div className="mb-10">{subtitle}</div>}
             <div className="row align-bottom">
                 <div>
                     <div className="row align-bottom">
-                        {props.overview && <OverviewPresetSelector showClearButton={props.showClearButton} />}
-                        {!props.overview && <PresetSelector showClearButton={props.showClearButton} />}
+                        {overview && <OverviewPresetSelector showClearButton={showClearButton} />}
+                        {!overview && <PresetSelector showClearButton={showClearButton} />}
                         {/*<ActionButtons />*/}
                     </div>
                     {stores.state.D6InfoVisible &&

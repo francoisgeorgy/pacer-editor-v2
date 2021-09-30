@@ -865,10 +865,10 @@ function getMidiSettingUpdateSysexMessages(presetIndex, data, complete=false) {
     return getMidiSettingsSysexMessages(presetIndex, data[TARGET_PRESET][presetIndex]["midi"], complete);
 }
 
-export function getFullNonGlobalConfigSysex(data, fullSysex = false) {
+export function getFullNonGlobalConfigSysex(data, filter = true, fullSysex = false) {
     const msgs = [];
     Object.keys(data[TARGET_PRESET])
-        .filter(presetIndex => (stores.state.overviewSelection.length < 1) || stores.state.overviewSelection.includes(presetIndex))
+        .filter(presetIndex => !filter || (stores.state.overviewSelection.length < 1) || stores.state.overviewSelection.includes(presetIndex))
         .forEach(presetIndex => {
             msgs.push(...getPresetNameSysexMessages(presetIndex, data, fullSysex));
             STOMPSWITCHES_BOTTOM.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
@@ -877,7 +877,7 @@ export function getFullNonGlobalConfigSysex(data, fullSysex = false) {
             EXPPEDALS.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
             msgs.push(...getMidiSettingUpdateSysexMessages(presetIndex, data, fullSysex));
         });
-    console.log("getFullNonGlobalConfigSysex", msgs);
+    // console.log("getFullNonGlobalConfigSysex", msgs);
     return msgs;
 }
 
