@@ -707,10 +707,6 @@ function getControlStepSysexMessages(presetIndex, controlId, steps, forceUpdate 
         if (!forceUpdate && !step.changed) continue;
 
         let msg = [];
-        // if (complete) {
-        //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
-        // }
-
         msg.push(
             // ...SYSEX_HEADER,
             COMMAND_SET,
@@ -719,7 +715,6 @@ function getControlStepSysexMessages(presetIndex, controlId, steps, forceUpdate 
             parseInt(controlId, 10)
         );
 
-        // add data:
         msg.push((i-1)*6 + 1, 1, step.channel ?? 0, 0x00);
         msg.push((i-1)*6 + 2, 1, step.msg_type ?? 0, 0x00);
         msg.push((i-1)*6 + 3, 1, step.data[0] ?? 0, 0x00);
@@ -727,41 +722,12 @@ function getControlStepSysexMessages(presetIndex, controlId, steps, forceUpdate 
         msg.push((i-1)*6 + 5, 1, step.data[2] ?? 0, 0x00);
         msg.push((i-1)*6 + 6, 1, step.active ?? 0);
 
-        // LED
-/*
-        msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl, 0x00);
-        msg.push((i-1)*4 + 0x41, 1, step.led_active_color, 0x00);
-        msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color, 0x00);
-        msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
-*/
-
-        // add checksum:
-        // msg.push(checksum(msg));
-
-        // inject header and add to list of messages:
-        // msgs.push(SYSEX_HEADER.concat(msg));
-        // if (complete) {
-        //     msg.push(SYSEX_END);
-        // }
         msgs.push(buildSysexMessage(msg, complete));
     }
-
-    // msgs.map(m => console.log("buildControlStepSysex", hs(m)));
-
     return msgs;
 }
 
 function getControlStepLedSysexMessages(presetIndex, controlId, steps, forceUpdate = false, complete = false) {
-
-    // STEPS:
-    // {"1": {"channel":0,"msg_type":70,"data":[0,0,127],"active":1},
-    //  "2": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
-    //  "3": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
-    //  "4": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
-    //  "5": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0},
-    //  "6": {"channel":0,"msg_type":97,"data":[0,0,0],"active":0}}
-
-    // console.log("getControlStepLedSysexMessages", JSON.stringify(steps));
 
     let msgs = [];
 
@@ -769,16 +735,10 @@ function getControlStepLedSysexMessages(presetIndex, controlId, steps, forceUpda
 
         let step = steps[i];
 
-        // console.log("step", i, presetIndex, controlId, step);
-
         if (!forceUpdate && !step.led_changed) continue;
 
         let msg = [];
-        // if (complete) {
-        //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
-        // }
 
-        // start with command and target:
         msg.push(
             // ...SYSEX_HEADER,
             COMMAND_SET,
@@ -787,25 +747,13 @@ function getControlStepLedSysexMessages(presetIndex, controlId, steps, forceUpda
             parseInt(controlId, 10)
         );
 
-        // LED
         msg.push((i-1)*4 + 0x40, 1, step.led_midi_ctrl ?? 0, 0x00);
         msg.push((i-1)*4 + 0x41, 1, step.led_active_color ?? 0, 0x00);
         msg.push((i-1)*4 + 0x42, 1, step.led_inactive_color ?? 0, 0x00);
-        // msg.push((i-1)*4 + 0x43, 1, step.led_num, 0x00);
         msg.push((i-1)*4 + 0x43, 1, step.led_num ?? 0);
 
-        // add checksum:
-        // msg.push(checksum(msg));
-
-        // inject header and add to list of messages:
-        // msgs.push(SYSEX_HEADER.concat(msg));
-        // if (complete) {
-        //     msg.push(SYSEX_END);
-        // }
-        // msgs.push(msg);
         msgs.push(buildSysexMessage(msg, complete));
     }
-
     return msgs;
 }
 
@@ -821,11 +769,7 @@ function getControlModeSysexMessages(presetIndex, controlId, mode, forceUpdate =
     if (!forceUpdate && !mode.control_mode_changed) return [];   // order important because "control_mode_change" could be undefined
 
     let msg = [];
-    // if (complete) {
-    //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
-    // }
 
-    // start with command and target:
     msg.push(
         // ...SYSEX_HEADER,
         COMMAND_SET,
@@ -837,16 +781,6 @@ function getControlModeSysexMessages(presetIndex, controlId, mode, forceUpdate =
         mode["control_mode"] ?? 0
     );
 
-    // add checksum:
-    // msg.push(checksum(msg));
-
-    // inject header and return the result:
-    // return [SYSEX_HEADER.concat(msg)];  // we need to return an array of messages, even if it's only one message
-    // if (complete) {
-    //     msg.push(SYSEX_END);
-    // }
-
-    // return [msg];
     return [buildSysexMessage(msg, complete)];
 }
 
@@ -861,8 +795,8 @@ function getControlModeSysexMessages(presetIndex, controlId, mode, forceUpdate =
  * @returns {*}
  */
 function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate = false, complete = false) {
-    const leds = !(FOOTSWITCHES.includes(controlId) || EXPPEDALS.includes(controlId));
-    if (leds) {
+    const hasLEDs = !(FOOTSWITCHES.includes(controlId) || EXPPEDALS.includes(controlId));
+    if (hasLEDs) {
         return [
             ...getControlModeSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId], forceUpdate, complete),
             ...getControlStepSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate, complete),
@@ -883,14 +817,9 @@ function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false
     for (let i of Object.keys(settings)) {
 
         let setting = settings[i];
-
         if (!setting.changed && !forceUpdate) continue;
 
         let msg = [];
-        // if (complete) {
-        //     msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
-        // }
-
         msg.push(
             // ...SYSEX_HEADER,
             COMMAND_SET,
@@ -899,7 +828,6 @@ function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false
             CONTROL_MIDI
         );
 
-        // add data:
         msg.push((i-1)*6 + 1, 1, setting.channel ?? 0, 0x00);
         msg.push((i-1)*6 + 2, 1, setting.msg_type ?? 0, 0x00);
         msg.push((i-1)*6 + 3, 1, setting.data[0] ?? 0, 0x00);
@@ -907,19 +835,8 @@ function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false
         msg.push((i-1)*6 + 5, 1, setting.data[2] ?? 0, 0x00);
         msg.push((i-1)*6 + 6, 1, setting.active ?? 0);
 
-        // add checksum:
-        // msg.push(checksum(msg));
-
-        // inject header and add to list of messages:
-        //msgs.push(SYSEX_HEADER.concat(msg));
-
-        // if (complete) {
-        //     SYSEX_HEADER.concat(msg)
-        //     msg.push(SYSEX_END);
-        // }
         msgs.push(buildSysexMessage(msg, complete));
     }
-
     return msgs;
 }
 
@@ -947,7 +864,6 @@ function getPresetNameSysexMessages(presetIndex, data, complete=false) {
 function getMidiSettingUpdateSysexMessages(presetIndex, data, complete=false) {
     return getMidiSettingsSysexMessages(presetIndex, data[TARGET_PRESET][presetIndex]["midi"], complete);
 }
-
 
 export function getFullNonGlobalConfigSysex(data, fullSysex = false) {
     const msgs = [];
