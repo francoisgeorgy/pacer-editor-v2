@@ -15,8 +15,8 @@ import {stores} from "../stores";
 const LEDMidi = ({ current_value, onChange }) => {
     return (
         <select value={current_value} onChange={(event) => onChange(event.target.value)}>
-            <option value="0">0</option>
-            <option value="1">1</option>
+            <option value="0">OFF</option>
+            <option value="1">ON</option>
         </select>
     );
 };
