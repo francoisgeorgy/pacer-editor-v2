@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {observer} from "mobx-react-lite";
 import {mergeDeep, parseSysexDump} from "../pacer/sysex";
 import FACTORY_PRESETS from "../factory-presets.json";
+import {stores} from "../stores";
 
 export const LoadFactoryDefaultsButton = observer(() => {
 

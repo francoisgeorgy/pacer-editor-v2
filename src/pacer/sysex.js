@@ -93,7 +93,7 @@ function isSysexData(data) {
 }
 
 // sysex contains START and END markers
-function getBytesIndex(sysex) {
+function getDataTarget(sysex) {
     // if ((data[0] !== SYSEX_START) || (data[data.byteLength - 1] !== SYSEX_END)) return null;
 
     // 00 01 77 7f 01 01 13 01 01 05 47 2d 4d 53 54 7c
@@ -861,8 +861,8 @@ function getPresetNameSysexMessages(presetIndex, data, complete=false) {
 }
 
 
-function getMidiSettingUpdateSysexMessages(presetIndex, data, complete=false) {
-    return getMidiSettingsSysexMessages(presetIndex, data[TARGET_PRESET][presetIndex]["midi"], complete);
+function getMidiSettingUpdateSysexMessages(presetIndex, data, complete= false) {
+    return getMidiSettingsSysexMessages(presetIndex, data[TARGET_PRESET][presetIndex]["midi"], true, complete);
 }
 
 export function getFullNonGlobalConfigSysex(data, filter = true, fullSysex = false) {
@@ -882,7 +882,7 @@ export function getFullNonGlobalConfigSysex(data, filter = true, fullSysex = fal
 }
 
 export {
-    getBytesIndex,
+    getDataTarget,
     isSysexData,
     parseSysexDump,
     getControlUpdateSysexMessages,

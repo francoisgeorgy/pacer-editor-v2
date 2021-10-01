@@ -4,7 +4,7 @@ import {
     getPresetNameSysexMessages,
     CONTROLS_DATA,
     FULL_DUMP_EXPECTED_BYTES,
-    getBytesIndex,
+    getDataTarget,
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
@@ -553,22 +553,19 @@ export class StateStore {
             i++;
             let k = messages.indexOf(SYSEX_END, i);
             let m = messages.slice(i-1, k+1)
-            const bi = getBytesIndex(m);
-            if (bi) {
-                if (bi.isPresetName) {
-                    // console.log("receiving a preset; clear bytes");
-                    this.bytesPresets[bi.presetNum] = [];
-                }
-                if (bi.isPreset) {
-                    this.bytesPresets[bi.presetNum].push(m);
-                } else if (bi.isGlobal) {
-                    this.bytesGlobal.push(m);
-                    // console.log("storeBytes: global");
-                } else {
-                    console.warn("storeBytes: unsupported message", m);
-                }
+            const target = getDataTarget(m);
+            if (target.isPresetName) {
+                // console.log("receiving a preset; clear bytes");
+                this.bytesPresets[target.presetNum] = [];
             }
-
+            if (target.isPreset) {
+                this.bytesPresets[target.presetNum].push(m);
+            } else if (target.isGlobal) {
+                this.bytesGlobal.push(m);
+                // console.log("storeBytes: global");
+            } else {
+                console.warn("storeBytes: unsupported message", m);
+            }
         }
     }
 
@@ -594,7 +591,8 @@ export class StateStore {
 
                     if (isSysexData(data)) {
                         // console.log("readFiles: file is sysex");
-                        this.data = mergeDeep(this.data || {}, parseSysexDump(data))
+                        // this.data = mergeDeep(this.data || {}, parseSysexDump(data))
+                        this.deepMergeData(parseSysexDump(data));
                         this.storeBytes(data);
                     } else {
                         console.log("readFiles: not a sysex file", hs(data.slice(0, 5)));

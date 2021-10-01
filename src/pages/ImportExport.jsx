@@ -11,6 +11,7 @@ import "./ImportExport.css";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import Switch from "react-switch";
 import {DownloadBin} from "../components/DownloadBin";
+import {Download} from "../components/Download";
 
 export const ImportExport = observer(() => {
 
@@ -59,6 +60,7 @@ export const ImportExport = observer(() => {
                     {/*{stores.midi.deviceConnected && <button className="action-button" onClick={() => stores.midi.readFullDump()}>Read Pacer</button>}*/}
                     {/*<DownloadAllPresets />*/}
                     {/*<button onClick={() => setFoo(getFullNonGlobalConfigSysex(data, true))}>getFullNonGlobalConfigSysex</button>*/}
+                    <DownloadAllPresets />
                     <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export"/>
                     <DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export ALL"/>
                     <DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX"/>

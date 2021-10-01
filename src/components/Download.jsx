@@ -6,8 +6,8 @@ export const Download = ({data, filename, addTimestamp, disabled, className, lab
 
     function handleClick(event) {
 
-        const d = typeof data === 'function' ? data() : data;
-        let url = window.URL.createObjectURL(new Blob([d], {type: "application/octet-stream"}));
+        // const d = typeof data === 'function' ? data() : data;
+        // let url = window.URL.createObjectURL(new Blob([d], {type: "application/octet-stream"}));
 
         let fname = filename;
 
@@ -15,18 +15,20 @@ export const Download = ({data, filename, addTimestamp, disabled, className, lab
             fname += '.' + getTimestamp();
         }
 
-        let shadowlink = document.createElement("a");
-        shadowlink.download = fname + ".syx";
-        shadowlink.style.display = "none";
-        shadowlink.href = url;
+        saveAs(new Blob([Uint8Array.from(typeof data === 'function' ? data() : data)], {type: "application/octet-stream"}), fname);
 
-        document.body.appendChild(shadowlink);
-        shadowlink.click();
-        document.body.removeChild(shadowlink);
-
-        setTimeout(function() {
-            return window.URL.revokeObjectURL(url);
-        }, 1000);
+        // let shadowlink = document.createElement("a");
+        // shadowlink.download = fname + ".syx";
+        // shadowlink.style.display = "none";
+        // shadowlink.href = url;
+        //
+        // document.body.appendChild(shadowlink);
+        // shadowlink.click();
+        // document.body.removeChild(shadowlink);
+        //
+        // setTimeout(function() {
+        //     return window.URL.revokeObjectURL(url);
+        // }, 1000);
 
     }
 
