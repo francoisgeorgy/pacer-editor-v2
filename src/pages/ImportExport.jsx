@@ -1,17 +1,11 @@
 import React, {useRef, useState} from 'react';
 import {stores} from "../stores";
-import {TARGET_PRESET} from "../pacer/constants";
-import {presetIndexToXY} from "../pacer/utils";
 import {observer} from "mobx-react-lite";
-import {BusyIndicator} from "../components/BusyIndicator";
-import {DownloadAllPresets} from "../components/DownloadAllPresets";
 import {getFullNonGlobalConfigSysex} from "../pacer/sysex";
 import {DownloadHex} from "../components/DownloadHex";
-import "./ImportExport.css";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
-import Switch from "react-switch";
 import {DownloadBin} from "../components/DownloadBin";
-import {Download} from "../components/Download";
+import "./ImportExport.css";
 
 export const ImportExport = observer(() => {
 
@@ -57,10 +51,7 @@ export const ImportExport = observer(() => {
                     <h3>Export to file :</h3>
                 </div>
                 <div className="mt-10">
-                    {/*{stores.midi.deviceConnected && <button className="action-button" onClick={() => stores.midi.readFullDump()}>Read Pacer</button>}*/}
                     {/*<DownloadAllPresets />*/}
-                    {/*<button onClick={() => setFoo(getFullNonGlobalConfigSysex(data, true))}>getFullNonGlobalConfigSysex</button>*/}
-                    <DownloadAllPresets />
                     <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export selection"/>
                     <DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export all"/>
                     <DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX (debug)"/>

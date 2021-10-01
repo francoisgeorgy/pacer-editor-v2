@@ -814,6 +814,8 @@ function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false
 
     let msgs = [];
 
+    const data_separator = 0x00;
+
     for (let i of Object.keys(settings)) {
 
         let setting = settings[i];
@@ -828,12 +830,12 @@ function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false
             CONTROL_MIDI
         );
 
-        msg.push((i-1)*6 + 1, 1, setting.channel ?? 0, 0x00);
-        msg.push((i-1)*6 + 2, 1, setting.msg_type ?? 0, 0x00);
-        msg.push((i-1)*6 + 3, 1, setting.data[0] ?? 0, 0x00);
-        msg.push((i-1)*6 + 4, 1, setting.data[1] ?? 0, 0x00);
-        msg.push((i-1)*6 + 5, 1, setting.data[2] ?? 0, 0x00);
-        msg.push((i-1)*6 + 6, 1, setting.active ?? 0);
+        msg.push((i-1)*6 + 1, 1, setting.channel ?? 0, data_separator);
+        msg.push((i-1)*6 + 2, 1, setting.msg_type ?? 0, data_separator);
+        msg.push((i-1)*6 + 3, 1, setting.data[0] ?? 0, data_separator);
+        msg.push((i-1)*6 + 4, 1, setting.data[1] ?? 0, data_separator);
+        msg.push((i-1)*6 + 5, 1, setting.data[2] ?? 0);
+        // msg.push((i-1)*6 + 6, 1, setting.active ?? 0);
 
         msgs.push(buildSysexMessage(msg, complete));
     }

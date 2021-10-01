@@ -11,7 +11,7 @@ export const LoadFactoryDefaultsButton = observer(() => {
         const data = Uint8Array.from(Object.values(FACTORY_PRESETS));
         // console.log("data", data);
         stores.state.data = mergeDeep(parseSysexDump(data));
-        stores.state.storeBytes(data);
+        // stores.state.storeBytes(data);
     }
 
     loadFactoryDefaults = async () => {
@@ -37,7 +37,8 @@ export const LoadFactoryDefaultsButton = observer(() => {
             console.log("loadFactoryDefaults OK");
 
             stores.state.data = mergeDeep(parseSysexDump(data));
-            stores.state.storeBytes(data);
+            // stores.state.storeBytes(data);
+
             // this.setState(
             //     produce(draft => {
             //         draft.binData = data;

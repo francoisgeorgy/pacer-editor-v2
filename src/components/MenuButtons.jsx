@@ -27,7 +27,7 @@ export const MenuButtons = observer(() => {
         const data = Uint8Array.from(Object.values(FACTORY_PRESETS));
         // console.log("data", data);
         stores.state.data = mergeDeep(parseSysexDump(data));
-        stores.state.storeBytes(data);
+        // stores.state.storeBytes(data);
     }
 
     function clearData() {

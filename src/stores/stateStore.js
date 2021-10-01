@@ -1,25 +1,16 @@
-import {computed, action, makeAutoObservable, observable} from "mobx";
-import {MSG_CTRL_OFF, SYSEX_SIGNATURE, TARGET_PRESET} from "../pacer/constants";
+import React from "react";
+import {action, makeAutoObservable} from "mobx";
+import {MSG_CTRL_OFF, TARGET_PRESET} from "../pacer/constants";
 import {
     getPresetNameSysexMessages,
     CONTROLS_DATA,
-    FULL_DUMP_EXPECTED_BYTES,
-    getDataTarget,
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
-    mergeDeep,
-    parseSysexDump,
-    requestAllPresets,
-    requestPreset,
-    SINGLE_PRESET_EXPECTED_BYTES,
-    splitDump,
-    SYSEX_END,
-    SYSEX_START
+    parseSysexDump
 } from "../pacer/sysex";
-import {flatDeep, MAX_FILE_SIZE, wait} from "../utils/misc";
+import {MAX_FILE_SIZE} from "../utils/misc";
 import {hs} from "../utils/hexstring";
-import React from "react";
 
 /**
  * https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge/34749873#34749873
@@ -38,11 +29,11 @@ export class StateStore {
     // this.stores = stores;
 
     data = null;
-    bytesPresets = [[], [], [],    // current, track, transport
-        [], [], [], [], [], [],    // A1..A6
-        [], [], [], [], [], [],    // B1..B6
-        [], [], [], [], [], [],    // C1..C6
-        [], [], [], [], [], []]    // D1..D6
+    // bytesPresets = [[], [], [],    // current, track, transport
+    //     [], [], [], [], [], [],    // A1..A6
+    //     [], [], [], [], [], [],    // B1..B6
+    //     [], [], [], [], [], [],    // C1..C6
+    //     [], [], [], [], [], []]    // D1..D6
     bytesGlobal = [];
     overviewSelection = [];  // presets selected in overview
     currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
@@ -112,7 +103,7 @@ export class StateStore {
             updateControlStep: action,
             updateMidiSettings: action,
             readPacer: action,
-            storeBytes: action,
+            // storeBytes: action,
             readFiles: action,
             updatePacer: action,
             sendDump: action,
@@ -122,11 +113,11 @@ export class StateStore {
         this.stores = stores;
 
         this.data = null;
-        this.bytesPresets = [[], [], [],    // current, track, transport
-                             [], [], [], [], [], [],    // A1..A6
-                             [], [], [], [], [], [],    // B1..B6
-                             [], [], [], [], [], [],    // C1..C6
-                             [], [], [], [], [], []]    // D1..D6
+        // this.bytesPresets = [[], [], [],    // current, track, transport
+        //                      [], [], [], [], [], [],    // A1..A6
+        //                      [], [], [], [], [], [],    // B1..B6
+        //                      [], [], [], [], [], [],    // C1..C6
+        //                      [], [], [], [], [], []]    // D1..D6
         this.bytesGlobal = [];
         this.sendProgress = null;
         this.overviewSelection = [];  // presets selected in overview
@@ -155,20 +146,7 @@ export class StateStore {
 
     }
 
-    //TODO:
-    // bytes:
-    // bytesPresets = [preset-index][]
-    // bytesGlobals = []
-
-    // pacerConnected() {
-    //     return this.midi.output > 0 && this.midi.input > 0;
-    // }
-
-    // get connected() {
-    //     // console.log("get connected", this.midi.input, this.midi.output);
-    //     return this.midi.output !== 0 && this.midi.input !== 0;
-    // }
-
+/*
     clearBytes() {
         this.bytesPresets = [[], [], [],    // current, track, transport
             [], [], [], [], [], [],    // A1..A6
@@ -177,6 +155,7 @@ export class StateStore {
             [], [], [], [], [], []]    // D1..D6
         this.bytesGlobal = [];
     }
+*/
 
     clear() {
         console.log("state: clear data");
@@ -185,7 +164,7 @@ export class StateStore {
         this.currentControl = "13";
         this.updateMessages = {};
         this.data = null;
-        this.clearBytes();
+        // this.clearBytes();
         this.updateMessages = {};
     }
 
@@ -545,7 +524,7 @@ export class StateStore {
     };
 */
 
-
+/*
     getBytesPresetsAsBlob() {
         // const a = [];
         // this.bytesPresets.forEach(
@@ -560,7 +539,9 @@ export class StateStore {
     isBytesPresetEmpty() {
         return !this.bytesPresets.some(e => e && e.length > 0);
     }
+*/
 
+/*
     storeBytes(messages) {
 
         let i = 0;
@@ -587,6 +568,7 @@ export class StateStore {
             }
         }
     }
+*/
 
     async readFiles(files) {
 
@@ -612,7 +594,7 @@ export class StateStore {
                         // console.log("readFiles: file is sysex");
                         // this.data = mergeDeep(this.data || {}, parseSysexDump(data))
                         this.deepMergeData(parseSysexDump(data));
-                        this.storeBytes(data);
+                        // this.storeBytes(data);
                     } else {
                         console.log("readFiles: not a sysex file", hs(data.slice(0, 5)));
                     }

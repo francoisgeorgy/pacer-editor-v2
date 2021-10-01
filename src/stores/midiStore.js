@@ -223,7 +223,7 @@ export class MidiStore {
             this.bytesReceived += message.data.length;
             this.stores.state.onBusy({busy: true, bytesReceived: this.bytesReceived});
             this.stores.state.deepMergeData(parseSysexDump(message.data));
-            this.stores.state.storeBytes(message.data);
+            // this.stores.state.storeBytes(message.data);
         } else {
             console.log("MIDI message is not a sysex message", hs(message.data))
         }
@@ -359,7 +359,7 @@ export class MidiStore {
     readPacer = (msg, bytesExpected, busyMessage = "Please wait...") => {
         this.bytesReceived = 0;
         this.stores.state.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected});
-        this.saveBytes = false;
+        // this.saveBytes = false;
         this.sendSysex(msg);
     };
 
@@ -380,7 +380,7 @@ export class MidiStore {
         // console.log("readFullDump()");
         this.bytesReceived = 0;
         this.stores.state.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: FULL_DUMP_EXPECTED_BYTES});
-        this.stores.state.clearBytes();
+        // this.stores.state.clearBytes();
         this.sendSysex(requestAllPresets());
     };
 
@@ -388,6 +388,7 @@ export class MidiStore {
      * Send the current data saved in stores.state.bytes
      * @param patch
      */
+/*
     sendDump = async () => {
 
         // console.log("sendDump");
@@ -424,5 +425,6 @@ export class MidiStore {
 
         setTimeout(() => this.sendProgress = null, 2000);
     };
+*/
 
 }
