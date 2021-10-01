@@ -39,7 +39,7 @@ export const DownloadJSON = ({data, filename, addTimestamp, className, label}) =
 
     // render() {
         return (
-            <button onClick={handleClick} className={className}>{label}</button>
+            <button onClick={handleClick} className={`action-button ${className}`}>{label}</button>
         );
     // }
 

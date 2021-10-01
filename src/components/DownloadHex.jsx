@@ -23,7 +23,7 @@ export const DownloadHex = ({data, filename, addTimestamp, className, label}) =>
     }
 
     return (
-        <button onClick={handleClick} className={className}>{label}</button>
+        <button onClick={handleClick} className={`action-button ${className}`}>{label}</button>
     );
 
 }

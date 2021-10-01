@@ -73,8 +73,13 @@ export const OverviewPresetSelector = observer(() => {
                     {this.props.showClearButton && currentPresetIndex && <button onClick={this.clearSelection}>clear selection</button>}
                 </div>
 */}
-                <div></div>
-                <div></div>
+                <div className="span-2">
+                    <button className={`ml-20 button-as-link ${stores.state.noneSelected() ? 'dimmed' : ''}`} onClick={clearSelection}>select none</button>
+                    <button className={`button-as-link ${stores.state.allSelected() ? 'dimmed' : ''}`} onClick={() => stores.state.selectAllPresets()}>select all</button>
+                </div>
+
+                {/*<div></div>*/}
+
                 <div className="force-read row align-center">
                     {/*<label>*/}
                         {/*<input type="checkbox" checked={stores.state.forceReread} onChange={stores.state.toggleForceReread} />*/}

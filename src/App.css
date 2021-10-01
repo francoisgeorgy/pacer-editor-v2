@@ -646,6 +646,23 @@ button.disabled:hover {
     border: 1px solid green;
 }
 
+.button-as-link {
+    margin: 0 10px;
+    margin-top: 5px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: blue;
+}
+
+.button-as-link.dimmed {
+    color: #aaa;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
 .debug {
     color: #777;
 }

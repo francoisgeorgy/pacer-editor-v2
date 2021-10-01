@@ -60,7 +60,7 @@ export const App = observer((props) => {
 
                         <header className="header">
                             <MenuLink activeOnlyWhenExact={true} to="/" label="Overview" />
-                            <MenuLink to="/preset"          label="Preset Controls" />
+                            <MenuLink to="/preset"          label="Preset config" />
                             <MenuLink to="/presetmidi"      label="Preset MIDI" />
                             <MenuLink to="/patch"           label="Import/Export" />
                             {/*{debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}*/}

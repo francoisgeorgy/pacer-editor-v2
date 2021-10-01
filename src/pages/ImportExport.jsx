@@ -61,10 +61,14 @@ export const ImportExport = observer(() => {
                     {/*<DownloadAllPresets />*/}
                     {/*<button onClick={() => setFoo(getFullNonGlobalConfigSysex(data, true))}>getFullNonGlobalConfigSysex</button>*/}
                     <DownloadAllPresets />
-                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export"/>
-                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export ALL"/>
-                    <DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX"/>
-                    <BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />
+                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export selection"/>
+                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export all"/>
+                    <DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX (debug)"/>
+                    {/*<BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />*/}
+                    <div>
+                        <p>You will get a file containing sysex messages, in binary format.</p>
+                        <p>This file can be use with this editor but also with any application able to send SysEx data from a file, like https://www.snoize.com/sysexlibrarian/.</p>
+                    </div>
                 </div>
 
                 <div className="mt-20">
@@ -74,7 +78,11 @@ export const ImportExport = observer(() => {
                     <input ref={inputOpenFileRef} type="file" style={{display:"none"}} onChange={onChangeFile} />
                     <div className="row align-center">
                         <button className="action-button" onClick={onInputFile}>Load sysex file</button>
-                        <Switch onChange={(checked) => console.log(checked)} checked={false} width={48} height={20} className="mr-10 align-self-center" /> Clear the editor's data before importing.
+                        {/*<Switch onChange={(checked) => console.log(checked)} checked={false} width={48} height={20} className="mr-10 align-self-center" /> Clear the editor's data before importing.*/}
+                    </div>
+                    <div>
+                        <p>The file must contain sysex messages, in binary format.</p>
+                        <p>You can create such a file with this editor but also with any application able to save SysEx data into a file, like https://www.snoize.com/sysexlibrarian/.</p>
                     </div>
                 </div>
 {/*
