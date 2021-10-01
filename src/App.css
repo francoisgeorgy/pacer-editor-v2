@@ -376,7 +376,7 @@ h3 {
 }
 
 .light {
-    color: #999;
+    color: #777;
 }
 
 .warning {
@@ -526,7 +526,7 @@ h3 {
 
 .action-button {
     /*display: block;*/
-    width: 180px;
+    width: 135px;
     margin-bottom: 12px;
     margin-right: 16px;
     padding: 4px 8px;
@@ -534,7 +534,7 @@ h3 {
 }
 
 .menu-buttons .action-button {
-    width: 135px;
+    /*width: 135px;*/
     margin-bottom: 0;
 }
 

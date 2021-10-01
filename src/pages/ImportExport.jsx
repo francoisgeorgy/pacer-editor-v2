@@ -21,8 +21,8 @@ export const ImportExport = observer(() => {
         inputOpenFileRef.current.click();
     }
 
-    function sendDump() {
-        stores.state.sendDump();
+    function sendToPacer() {
+        stores.midi.sendToPacer();
     }
 
     const data = stores.state.data;
@@ -33,7 +33,7 @@ export const ImportExport = observer(() => {
             <div className="mb-20">
                 <PresetSelectorAndButtons showClearButton={true} overview={true}
                                           title="Import/Export presets"
-                                          subtitle="Select the presets to export:" />
+                                          subtitle="Select the presets to export or send:" />
             </div>
 
             <div className="content-row-content first dump-wrapper">
@@ -48,17 +48,19 @@ export const ImportExport = observer(() => {
                 </div>
 
                 <div className="mt-20">
-                    <h3>Export to file :</h3>
+                    <h3>Export to file:</h3>
                 </div>
                 <div className="mt-10">
                     {/*<DownloadAllPresets />*/}
-                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export selection"/>
-                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export all"/>
-                    <DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX (debug)"/>
+                    <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export"/>
+                    <span className="light">presets {stores.state.getOverviewSelectionInfo()}</span>
+                    {/*<DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export all"/>*/}
+                    {/*<DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX (debug)"/>*/}
                     {/*<BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />*/}
                     <div>
                         <p>You will get a file containing sysex messages, in binary format.</p>
-                        <p>This file can be use with this editor but also with any application able to send SysEx data from a file, like https://www.snoize.com/sysexlibrarian/.</p>
+                        <p>This file can be use with this editor but also with any application able to send SysEx data from a file,
+                            like <a href="https://www.snoize.com/sysexlibrarian/" target="_blank" rel="noopener">Sysex Librarian</a> or <a href="https://www.bome.com/products/sendsx" target="_blank" rel="noopener">Send SX</a>.</p>
                     </div>
                 </div>
 
@@ -68,47 +70,32 @@ export const ImportExport = observer(() => {
                 <div className="mt-10">
                     <input ref={inputOpenFileRef} type="file" style={{display:"none"}} onChange={onChangeFile} />
                     <div className="row align-center">
-                        <button className="action-button" onClick={onInputFile}>Load sysex file</button>
+                        <button className="action-button" onClick={onInputFile}>Load file</button>
                         {/*<Switch onChange={(checked) => console.log(checked)} checked={false} width={48} height={20} className="mr-10 align-self-center" /> Clear the editor's data before importing.*/}
                     </div>
                     <div>
                         <p>The file must contain sysex messages, in binary format.</p>
-                        <p>You can create such a file with this editor but also with any application able to save SysEx data into a file, like https://www.snoize.com/sysexlibrarian/.</p>
+                        <p>You can create such a file with this editor but also with any application able
+                            to save SysEx data into a file,
+                            like <a href="https://www.snoize.com/sysexlibrarian/" target="_blank" rel="noopener">Sysex Librarian</a> or <a href="https://www.bome.com/products/sendsx" target="_blank" rel="noopener">Send SX</a>.</p>
+                    </div>
+                </div>
+
+                <div className="mt-20">
+                    <h3>Send to Pacer:</h3>
+                </div>
+                <div className="mt-10">
+                    <div className="row align-center">
+                        <button className={`action-button ${stores.midi.deviceConnected ? "" : "disabled"}`} onClick={sendToPacer}>Send</button>
+                        <span className="light">presets {stores.state.getOverviewSelectionInfo()}</span>
+                        {stores.state.sendProgress && <span>{stores.state.sendProgress}</span>}
+                    </div>
+                    <div>
+                        <p>This will send the selected presets to the Pacer.</p>
                     </div>
                 </div>
 {/*
                     {data && stores.midi.deviceConnected && <button className="action-button" onClick={sendDump}>Send to Pacer</button>}
-                    {stores.state.sendProgress && <span>{stores.state.sendProgress}</span>}
-*/}
-                {/*</div>*/}
-
-{/*
-                <div className="mt-10">
-                    <h3>Data included in the dump:</h3>
-                    <p>
-                        Presets marked "no data" are ignored and will not be sent to your Pacer or included in the sysex file.
-                    </p>
-                </div>
-                <div className="patch-content">
-                {
-                    Array.from(Array(24+1).keys()).map(
-                    index => {
-                        let id = presetIndexToXY(index);
-                        let show = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
-                        let name = show ? data[TARGET_PRESET][index]["name"] : "";
-
-                        if (index === 0) return null;
-
-                        return (
-                            <div key={index}>
-                                <div className="right-align">{index}</div>
-                                <div>{id}</div>
-                                {show ? <div>{name}</div> : <div className="placeholder">no data</div>}
-                            </div>
-                        );
-                    })
-                }
-                </div>
 */}
 
                 {status &&

@@ -11,6 +11,7 @@ import {
 } from "../pacer/sysex";
 import {MAX_FILE_SIZE} from "../utils/misc";
 import {hs} from "../utils/hexstring";
+import {presetIndexToXY} from "../pacer/utils";
 
 /**
  * https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge/34749873#34749873
@@ -320,6 +321,10 @@ export class StateStore {
         } else {
             setTimeout(() => this.onBusy({busy: false}), delay);
         }
+    }
+
+    getOverviewSelectionInfo() {
+        return this.overviewSelection.map(i => presetIndexToXY(i) + ' ');
     }
 
     togglePresetOverviewSelection(presetIndex) { // String

@@ -384,12 +384,13 @@ export class MidiStore {
         this.sendSysex(requestAllPresets());
     };
 
+    //=============================================================================================
+
     /**
      * Send the current data saved in stores.state.bytes
      * @param patch
      */
-/*
-    sendDump = async () => {
+    sendToPacer = async () => {
 
         // console.log("sendDump");
 
@@ -425,6 +426,5 @@ export class MidiStore {
 
         setTimeout(() => this.sendProgress = null, 2000);
     };
-*/
 
 }
