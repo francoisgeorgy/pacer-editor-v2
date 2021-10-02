@@ -324,7 +324,7 @@ export class StateStore {
     }
 
     getOverviewSelectionInfo() {
-        return this.overviewSelection.map(i => presetIndexToXY(i) + ' ');
+        return this.overviewSelection.map(i => presetIndexToXY(i)).sort().join(' ');
     }
 
     togglePresetOverviewSelection(presetIndex) { // String

@@ -53,7 +53,7 @@ export const ImportExport = observer(() => {
                 <div className="mt-10">
                     {/*<DownloadAllPresets />*/}
                     <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export"/>
-                    <span className="light">presets {stores.state.getOverviewSelectionInfo()}</span>
+                    <span className="light">{stores.state.allSelected() ? 'all presets' : stores.state.noneSelected() ? '' : `presets ${stores.state.getOverviewSelectionInfo()}`}</span>
                     {/*<DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export all"/>*/}
                     {/*<DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX (debug)"/>*/}
                     {/*<BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />*/}
@@ -87,7 +87,7 @@ export const ImportExport = observer(() => {
                 <div className="mt-10">
                     <div className="row align-center">
                         <button className={`action-button ${stores.midi.deviceConnected ? "" : "disabled"}`} onClick={sendToPacer}>Send</button>
-                        <span className="light">presets {stores.state.getOverviewSelectionInfo()}</span>
+                        <span className="light">{stores.state.allSelected() ? 'all presets' : stores.state.noneSelected() ? '' : `presets ${stores.state.getOverviewSelectionInfo()}`}</span>
                         {stores.state.sendProgress && <span>{stores.state.sendProgress}</span>}
                     </div>
                     <div>

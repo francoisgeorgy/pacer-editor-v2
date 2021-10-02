@@ -83,6 +83,13 @@
 
 .selector.selected {
     /*background-color: green!important;       !* present selected color overrides preset hover color *!*/
+    background-color: #aaaaaa;       /* present selected color overrides preset hover color */
+    /*border: 1px solid #008000;*/
+    color: white;
+}
+
+.selector.loaded.selected {
+    /*background-color: green!important;       !* present selected color overrides preset hover color *!*/
     background-color: #008000!important;       /* present selected color overrides preset hover color */
     /*border: 1px solid #008000;*/
     color: white;

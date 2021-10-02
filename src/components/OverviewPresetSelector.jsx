@@ -17,7 +17,8 @@ const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
     // const selected = presetIndex === stores.state.currentPresetIndex;
     const selected = stores.state.overviewSelection.includes(presetIndex);
     if (selected) c += " selected";
-    if (!selected && hasData) c += " loaded";
+    if (hasData) c += " loaded";
+    // if (!selected && hasData) c += " loaded";
 
     if (xyId === "CURRENT" && name) {
         return (<div className={c} onClick={() => onClick(presetIndex)}>
