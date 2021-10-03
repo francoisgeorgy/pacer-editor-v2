@@ -1,7 +1,7 @@
 import {action, computed, makeAutoObservable} from 'mobx';
 import {loadPreferences, savePreferences} from "../utils/preferences";
 import {
-    FULL_DUMP_EXPECTED_BYTES, isSysexData, parseSysexDump,
+    FULL_DUMP_EXPECTED_BYTES, getFullNonGlobalConfigSysex, isSysexData, parseSysexDump,
     requestAllPresets,
     requestPreset,
     SINGLE_PRESET_EXPECTED_BYTES,
@@ -10,6 +10,7 @@ import {
 import {wait} from "../utils/misc";
 import {SYSEX_SIGNATURE} from "../pacer/constants";
 import {hs} from "../utils/hexstring";
+import {stores} from "./index";
 
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
@@ -392,7 +393,7 @@ export class MidiStore {
      */
     sendToPacer = async () => {
 
-        // console.log("sendDump");
+        console.log("sendToPacer");
 
         if (!this.outputInUse) {
             console.warn("sendPatch: no output enabled to send the message");
@@ -410,9 +411,13 @@ export class MidiStore {
         this.sendProgress = 'building sysex messages...';
         await wait(20); // to force an update to of the UI to display the above message
 
+        const messages = getFullNonGlobalConfigSysex(this.stores.state.data, true, true)
+        // d.forEach(msg => bytes.push(...msg));
+
+
         // console.log(this.sendProgress);
 
-        const messages = splitDump(Array.from(this.stores.state.getBytesPresetsAsBlob()));
+        // const messages = splitDump(Array.from(this.stores.state.getBytesPresetsAsBlob()));
 
         let i = 0;
         let t = messages.length;
@@ -420,7 +425,7 @@ export class MidiStore {
         for (const message of messages) {
             i++;
             this.sendProgress = `sending message ${i} of ${t} (${Math.round(i*100/t)}%)`;
-            this.sendSysex(message);
+            console.log("sendToPacer: send", hs(message));
             await wait(10);
         }
 
