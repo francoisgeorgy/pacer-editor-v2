@@ -3,22 +3,16 @@ import {observer} from "mobx-react-lite";
 import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 import {stores} from "../stores";
-import * as Switch from "react-switch";
+import ReactSwitch from "./switch";
 import "./PresetSelector.css";
 
 // TODO: is observer needed here?
 const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
 
-    // console.log("OverviewPresetSelector.Selector");
-
-    // console.log("Selector", xyId, presetIndex, stores.state.currentPreset, typeof presetIndex, typeof stores.state.currentPreset);
-
     let c = "selector";
-    // const selected = presetIndex === stores.state.currentPresetIndex;
     const selected = stores.state.overviewSelection.includes(presetIndex);
     if (selected) c += " selected";
     if (hasData) c += " loaded";
-    // if (!selected && hasData) c += " loaded";
 
     if (xyId === "CURRENT" && name) {
         return (<div className={c} onClick={() => onClick(presetIndex)}>
@@ -38,7 +32,6 @@ export const OverviewPresetSelector = observer(() => {
         stores.state.togglePresetOverviewSelection(index);
         const data = stores.state.data;
         if (index === "24") {
-            // console.log("D6 loaded?", data && data[TARGET_PRESET] && data[TARGET_PRESET][index]);
             if (!(data && data[TARGET_PRESET] && data[TARGET_PRESET][index])) {
                 stores.state.showD6Info();
                 return;
@@ -53,13 +46,9 @@ export const OverviewPresetSelector = observer(() => {
         stores.state.clearPresetSelection();
     }
 
-    // console.log("OverviewPresetSelector.OverviewPresetSelector");
-
-    const {data, currentPresetIndex} = stores.state;
-    // console.log("PresetSelector render", currentPreset, typeof currentPreset);
+    const {data} = stores.state;
 
     let curHasData = data && data[TARGET_PRESET] && data[TARGET_PRESET][0];
-
     let currName = curHasData ? data[TARGET_PRESET][0]["name"] : "";
 
     return (
@@ -67,23 +56,16 @@ export const OverviewPresetSelector = observer(() => {
         <div className="selectors">
             <div className="preset-selectors">
 
-                <Selector xyId={"CURRENT"} presetIndex={"0"} hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]} name={currName}
-                          xselected={!!currentPresetIndex} onClick={selectPreset} key={0} />
-{/*
-                <div className="clear-selection">
-                    {this.props.showClearButton && currentPresetIndex && <button onClick={this.clearSelection}>clear selection</button>}
-                </div>
-*/}
+                <Selector xyId={"CURRENT"} presetIndex={"0"} name={currName}
+                          hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]}
+                          onClick={selectPreset} key={0} />
                 <div className="span-2">
                     <button className={`ml-20 button-as-link ${stores.state.noneSelected() ? 'dimmed' : ''}`} onClick={clearSelection}>select none</button>
                     <button className={`button-as-link ${stores.state.allSelected() ? 'dimmed' : ''}`} onClick={() => stores.state.selectAllPresets()}>select all</button>
                 </div>
 
                 <div className="force-read row align-center">
-
-                    <Switch.Switch onChange={(checked) => stores.state.toggleForceReread(checked)} checked={stores.state.forceReread} width={48} height={20}
-                            className="mr-10 align-self-center" />
-
+                    <ReactSwitch onChange={(checked) => stores.state.toggleForceReread(checked)} checked={stores.state.forceReread} width={48} height={20} className="mr-10 align-self-center" />
                     Always read from Pacer
                 </div>
                 {

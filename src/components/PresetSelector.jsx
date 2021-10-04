@@ -3,19 +3,16 @@ import {observer} from "mobx-react-lite";
 import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 import {stores} from "../stores";
-import Switch from "react-switch";
+import ReactSwitch from "./switch";
 import "./PresetSelector.css";
 
 // TODO: is observer needed here?
 const Selector = observer(({ xyId, presetIndex, hasData, name, onClick }) => {
 
-    // console.log("Selector", xyId, presetIndex, stores.state.currentPreset, typeof presetIndex, typeof stores.state.currentPreset);
-
     let c = "selector";
     const selected = presetIndex === stores.state.currentPresetIndex;
     if (selected) c += " selected";
     if (hasData) c += " loaded";
-    // if (!selected && hasData) c += " loaded";
 
     if (xyId === "CURRENT" && name) {
         return (<div className={c} onClick={() => onClick(presetIndex)}>
@@ -50,12 +47,8 @@ export const PresetSelector = observer(() => {
         stores.state.clearPresetSelection();
     }
 
-    // render() {
-    const {data, currentPresetIndex} = stores.state;
-    // console.log("PresetSelector render", currentPreset, typeof currentPreset);
-
+    const {data} = stores.state;
     let curHasData = data && data[TARGET_PRESET] && data[TARGET_PRESET][0];
-
     let currName = curHasData ? data[TARGET_PRESET][0]["name"] : "";
 
     return (
@@ -63,27 +56,15 @@ export const PresetSelector = observer(() => {
             <div className="selectors">
                 <div className="preset-selectors">
 
-                    <Selector xyId={"CURRENT"} presetIndex={"0"} hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]} name={currName}
-                              xselected={!!currentPresetIndex} onClick={selectPreset} key={0}/>
-
-{/*
-                    <div className="clear-selection">
-                        {this.props.showClearButton && currentPresetIndex && <button onClick={this.clearSelection}>clear selection</button>}
-                    </div>
-*/}
-
-                    <div></div>
-                    <div></div>
-
+                    <Selector xyId={"CURRENT"} presetIndex={"0"} name={currName}
+                              hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]}
+                              onClick={selectPreset} key={0}/>
+                    <div/>
+                    <div/>
                     <div className="force-read row align-center">
-{/*
-                        <label>
-                            <input type="checkbox" checked={this.props.stores.state.forceReread} onChange={this.props.stores.state.toggleForceReread} />
-                            Always read from Pacer
-                        </label>
-*/}
-                        <Switch onChange={(checked) => stores.state.toggleForceReread(checked)} checked={stores.state.forceReread} width={48} height={20}
-                                className="mr-10 align-self-center" />
+                        <ReactSwitch onChange={(checked) => stores.state.toggleForceReread(checked)}
+                                     checked={stores.state.forceReread}
+                                     width={48} height={20} className="mr-10 align-self-center" />
                         <span title="Always read the preset from the Pacer and refresh the editor memory. Use this if you update presets in the Pacer while using the editor.">
                             Always read from Pacer
                         </span>
