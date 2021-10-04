@@ -266,11 +266,11 @@ export const Home = () => {
             <div className="doc">
                 <div>
                     <p>You need to allow your browser to use your MIDI device:</p>
-                    <img src="help-01.png" alt="" />
+                    <img src="img/help-01.png" alt="" />
                 </div>
                 <div>
                     <p>In case you didn't allow the use of MIDI device and want to change that, you can right-click on the URL icon and change the setting:</p>
-                    <img src="help-02.png" alt="" />
+                    <img src="img/help-02.png" alt="" />
                 </div>
             </div>
 

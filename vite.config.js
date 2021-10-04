@@ -1,10 +1,8 @@
-import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import packageJson from "./package.json";
-import { replaceCodePlugin } from "vite-plugin-replace";
+import {replaceCodePlugin} from "vite-plugin-replace";
+import {VitePWA} from 'vite-plugin-pwa'
 
-// https://vitejs.dev/config/
-// export default defineConfig({    // defineConfig will throw TS warning rel. to replace()
 export default {
     build: {
         sourcemap: process.env.SOURCE_MAP === 'true',
@@ -21,6 +19,38 @@ export default {
                     to: packageJson.version,
                 }
             ]
+        }),
+        VitePWA({
+            mode: 'development',
+            base: '/pacer-editor/',
+            registerType: 'autoUpdate',
+            includeAssets: [
+                'img/*',
+                'patches/*'
+            ],
+            manifest: {
+                name: 'Vite PWA Lab',
+                short_name: 'Vite PWA Lab',
+                theme_color: '#ffffff',
+                icons: [
+                    {
+                        src: 'pwa-192x192.png',
+                        sizes: '192x192',
+                        type: 'image/png',
+                    },
+                    {
+                        src: 'pwa-512x512.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                    },
+                    {
+                        src: 'pwa-512x512.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                        purpose: 'any maskable',
+                    }
+                ]
+            }
         })
     ]
 }

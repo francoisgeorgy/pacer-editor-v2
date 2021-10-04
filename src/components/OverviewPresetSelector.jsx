@@ -3,7 +3,7 @@ import {observer} from "mobx-react-lite";
 import {presetXYToIndex} from "../pacer/utils";
 import {TARGET_PRESET} from "../pacer/constants";
 import {stores} from "../stores";
-import Switch from "react-switch";
+import * as Switch from "react-switch";
 import "./PresetSelector.css";
 
 // TODO: is observer needed here?
@@ -79,15 +79,12 @@ export const OverviewPresetSelector = observer(() => {
                     <button className={`button-as-link ${stores.state.allSelected() ? 'dimmed' : ''}`} onClick={() => stores.state.selectAllPresets()}>select all</button>
                 </div>
 
-                {/*<div></div>*/}
-
                 <div className="force-read row align-center">
-                    {/*<label>*/}
-                        {/*<input type="checkbox" checked={stores.state.forceReread} onChange={stores.state.toggleForceReread} />*/}
-                        <Switch onChange={(checked) => stores.state.toggleForceReread(checked)} checked={stores.state.forceReread} width={48} height={20}
-                                className="mr-10 align-self-center" />
-                        Always read from Pacer
-                    {/*</label>*/}
+
+                    <Switch.Switch onChange={(checked) => stores.state.toggleForceReread(checked)} checked={stores.state.forceReread} width={48} height={20}
+                            className="mr-10 align-self-center" />
+
+                    Always read from Pacer
                 </div>
                 {
                     ['A', 'B', 'C', 'D'].map(
