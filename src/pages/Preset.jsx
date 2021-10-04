@@ -6,16 +6,13 @@ import {ControlSelector} from "../components/ControlSelector";
 import {CONTROLS_FULLNAME, TARGET_PRESET} from "../pacer/constants";
 import {setAutoFreeze} from "immer";
 import {ControlStepsEditor} from "../components/ControlStepsEditor";
-// import Dropzone from "react-dropzone";
 import {ControlModeEditor} from "../components/ControlModeEditor";
 import {PresetNameEditor} from "../components/PresetNameEditor";
-// import {dropOverlayStyle, isVal} from "../utils/misc";
 import {isVal} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
-// import UpdateMessages from "../components/UpdateMessages";
 import {presetIndexToXY} from "../pacer/utils";
 import {PresetOverview} from "../components/PresetsOverview";
-import Switch from "react-switch";
+import ReactSwitch from "../components/switch";
 import "./Preset.css";
 
 //FIXME: fix this:
@@ -112,11 +109,10 @@ export const Preset = observer(() => {
             {data && data[TARGET_PRESET][presetIndex] &&
             <div className="row align-center mt-20">
                 <div className="edit-section-title">Controls:</div>
-                <Switch onChange={(checked) => stores.state.setDetailView(checked)} checked={stores.state.detailView}
-                        width={48} height={20} className="ml-30 mr-10" />
+                <ReactSwitch onChange={(checked) => stores.state.setDetailView(checked)}
+                             checked={stores.state.detailView}
+                             width={48} height={20} className="ml-30 mr-10" />
                 show details
-
-                {/*<button className="btn-small ml-20" onClick={() => stores.state.toggleDetailView()}>{stores.state.detailView ? 'simple selectors' : 'detailed selectors'}</button>*/}
             </div>}
 
             {data && data[TARGET_PRESET][presetIndex] &&
