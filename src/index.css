@@ -165,6 +165,10 @@ button:focus {
     margin-left: 30px;
 }
 
+.ml-100 {
+    margin-left: 100px;
+}
+
 .mr-5 {
     margin-right: 5px;
 }

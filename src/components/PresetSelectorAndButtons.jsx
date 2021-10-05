@@ -6,7 +6,7 @@ import {OverviewPresetSelector} from "./OverviewPresetSelector";
 
 export const PresetSelectorAndButtons = observer(({overview, showClearButton, title, subtitle}) => {
     return (
-        <div className="content-row-content first mb-20">
+        <div className="content-row-content first xmb-20">
             <h2>{title || 'Presets'}</h2>
             {subtitle && <div className="mb-10">{subtitle}</div>}
             <div className="row align-bottom">

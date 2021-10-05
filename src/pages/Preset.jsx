@@ -97,7 +97,7 @@ export const Preset = observer(() => {
 
             {/*<LoadFactoryDefaultsButton />*/}
 
-            {data && data[TARGET_PRESET][presetIndex] &&
+            {data?.[TARGET_PRESET]?.[presetIndex] &&
             <div className="content-row-content">
                 {/*<h2>Preset {presetLabel}</h2>*/}
                 <h3 className="preset-title">
@@ -106,7 +106,7 @@ export const Preset = observer(() => {
                 <PresetNameEditor />
             </div>}
 
-            {data && data[TARGET_PRESET][presetIndex] &&
+            {data && data[TARGET_PRESET]?.[presetIndex] &&
             <div className="row align-center mt-20">
                 <div className="edit-section-title">Controls:</div>
                 <ReactSwitch onChange={(checked) => stores.state.setDetailView(checked)}
@@ -115,7 +115,7 @@ export const Preset = observer(() => {
                 show details
             </div>}
 
-            {data && data[TARGET_PRESET][presetIndex] &&
+            {data && data[TARGET_PRESET]?.[presetIndex] &&
             <div className="content-row-content">
 
                 {stores.state.detailView &&
