@@ -1,7 +1,7 @@
 import {action, computed, makeAutoObservable} from 'mobx';
 import {loadPreferences, savePreferences} from "../utils/preferences";
 import {
-    FULL_DUMP_EXPECTED_BYTES, getFullNonGlobalConfigSysex, isSysexData, parseSysexDump,
+    FULL_DUMP_EXPECTED_BYTES, getFullNonGlobalConfigSysex, getMessageTarget, isSysexData, parseSysexDump,
     requestAllPresets,
     requestPreset,
     SINGLE_PRESET_EXPECTED_BYTES,
@@ -11,6 +11,7 @@ import {wait} from "../utils/misc";
 import {SYSEX_SIGNATURE} from "../pacer/constants";
 import {hs} from "../utils/hexstring";
 import {stores} from "./index";
+import {presetIndexToXY} from "../pacer/utils";
 
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
@@ -83,7 +84,9 @@ export class MidiStore {
             useOutput: action,
             releaseOutput: action,
             updateInputsOutputs: action,
-            deviceConnected: computed
+            setSendProgress: action,
+            deviceConnected: computed,
+            abort: false
         });
 
         this.stores = stores;
@@ -92,6 +95,8 @@ export class MidiStore {
         this.inputInUse = ""; //WebMidi.MIDIInput[] = [];
         this.outputInUse = ""; //WebMidi.MIDIOutput[] = [];
         this.bytesReceived = 0;
+
+        this.abort = false;
 
         this.onStateChange = this.onStateChange.bind(this);     // very important
         this.onMidiMessage = this.onMidiMessage.bind(this);     // very important
@@ -387,6 +392,14 @@ export class MidiStore {
 
     //=============================================================================================
 
+    abortSend() {
+        this.abort = true;
+    }
+
+    setSendProgress(msg) {
+        this.sendProgress = msg;
+    }
+
     /**
      * Send the current data saved in stores.state.bytes
      * @param patch
@@ -400,36 +413,25 @@ export class MidiStore {
             return;
         }
 
-        // let out = this.outputById(this.stores.state.output);
-        // if (!out) {
-        //     console.warn(`send: output ${this.stores.state.output} not found`);
-        //     return;
-        // }
-
-        // this.showBusy({busy: true, busyMessage: "sending dump..."});
-
         this.sendProgress = 'building sysex messages...';
         await wait(20); // to force an update to of the UI to display the above message
 
         const messages = getFullNonGlobalConfigSysex(this.stores.state.data, true, true)
-        // d.forEach(msg => bytes.push(...msg));
-
-
-        // console.log(this.sendProgress);
-
-        // const messages = splitDump(Array.from(this.stores.state.getBytesPresetsAsBlob()));
 
         let i = 0;
         let t = messages.length;
-
+        this.abort = false;
         for (const message of messages) {
+            if (this.abort) break;
+            if (!message) continue;
             i++;
-            this.sendProgress = `sending message ${i} of ${t} (${Math.round(i*100/t)}%)`;
-            console.log("sendToPacer: send", hs(message));
-            await wait(10);
+            // this.setSendProgress(`sending message ${i} of ${t} (${Math.round(i*100/t)}%)`);
+            this.setSendProgress(`sending... ${Math.round(i*100/t)}% (${presetIndexToXY(getMessageTarget(message))})`);
+            this.send(message);
+            await wait(5);
         }
 
-        setTimeout(() => this.sendProgress = null, 2000);
+        setTimeout(() => this.setSendProgress(null), 1000);
     };
 
 }

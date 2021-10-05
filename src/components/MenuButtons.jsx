@@ -11,7 +11,7 @@ export const MenuButtons = observer(() => {
     function onChangeFile(e) {
         let file = e.target.files[0];
         if (file) {
-            stores.state.readFiles([file]).then(() => console.log("done reading files"));;
+            stores.state.readFiles([file]).then(() => console.log("done reading files"));
         }
     }
 
@@ -21,7 +21,8 @@ export const MenuButtons = observer(() => {
 
     function loadFactoryDefaults() {
         const data = Uint8Array.from(Object.values(FACTORY_PRESETS));
-        stores.state.data = mergeDeep(parseSysexDump(data));
+        // stores.state.data = mergeDeep(parseSysexDump(data));
+        stores.state.deepMergeData(parseSysexDump(data));
     }
 
     function clearData() {

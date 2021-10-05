@@ -97,7 +97,6 @@ export class StateStore {
 
         this.data = null;
         this.bytesGlobal = [];
-        this.sendProgress = null;
         this.overviewSelection = [];  // presets selected in overview
         this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.currentControl = "13";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
@@ -255,7 +254,6 @@ export class StateStore {
     hideBusy(delay = 0) {
         if (delay < 1) {
             this.onBusy({busy: false});
-            // this.sendProgress = null;
         } else {
             setTimeout(() => this.onBusy({busy: false}), delay);
         }
@@ -291,6 +289,10 @@ export class StateStore {
 
     noneSelected() {
         return this.overviewSelection.length < 1;
+    }
+
+    someSelected() {
+        return this.overviewSelection.length > 0;
     }
 
     allSelected() {

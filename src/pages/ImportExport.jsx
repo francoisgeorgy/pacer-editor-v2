@@ -37,18 +37,6 @@ export const ImportExport = observer(() => {
             <div className="content-row-content first dump-wrapper">
 
                 <div className="import-export-actions">
-                    <div>
-                        <div>
-                            <div className="action-name">Export to file:</div>
-                        </div>
-                        <div className="mt-10">
-                            <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export"/>
-                            {/*<span className="light">{stores.state.allSelected() ? 'all presets' : stores.state.noneSelected() ? '' : `presets ${stores.state.getOverviewSelectionInfo()}`}</span>*/}
-                            {/*<DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export all"/>*/}
-                            {/*<DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX (debug)"/>*/}
-                            {/*<BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />*/}
-                        </div>
-                    </div>
 
                     <div className="">
                         <div>
@@ -63,22 +51,44 @@ export const ImportExport = observer(() => {
                         </div>
                     </div>
 
+                    <div>
+                        <div>
+                            <div className="action-name">Export to file:</div>
+                        </div>
+                        <div className="mt-10">
+                            <DownloadBin data={() => getFullNonGlobalConfigSysex(data, true, true)}
+                                         filename={`pacer-patch`} addTimestamp={true}
+                                         className={stores.state.someSelected() ? '' : 'disabled'} label="Export"/>
+                            {/*<span className="light">{stores.state.allSelected() ? 'all presets' : stores.state.noneSelected() ? '' : `presets ${stores.state.getOverviewSelectionInfo()}`}</span>*/}
+                            {/*<DownloadBin data={() => getFullNonGlobalConfigSysex(data, false, true)} filename={`pacer-patch`} addTimestamp={true} label="Export all"/>*/}
+                            {/*<DownloadHex data={() => getFullNonGlobalConfigSysex(data, true, true)} filename={`pacer-patch`} addTimestamp={true} label="Export HEX (debug)"/>*/}
+                            {/*<BusyIndicator className="space-left inline-busy" busyMessage={"reading pacer:"} />*/}
+                        </div>
+                    </div>
+
                     <div className="">
                         <div>
                             <div className="action-name">Send to Pacer:</div>
                         </div>
                         <div className="mt-10">
                             <div className="row align-center">
-                                <button className={`action-button ${stores.midi.deviceConnected ? "" : "disabled"}`} onClick={sendToPacer}>Send</button>
+                                <button className={`action-button ${stores.midi.deviceConnected ? "" : "disabled"} ${stores.state.someSelected() ? '' : 'disabled'}`}
+                                        onClick={sendToPacer}>Send</button>
                                 {/*<span className="light">{stores.state.allSelected() ? 'all presets' : stores.state.noneSelected() ? '' : `presets ${stores.state.getOverviewSelectionInfo()}`}</span>*/}
                                 {/*{stores.state.sendProgress && <span>{stores.state.sendProgress}</span>}*/}
                             </div>
                         </div>
                     </div>
 
+                    {stores.midi.sendProgress &&
                     <div className="no-border">
-                        {stores.state.sendProgress}
-                    </div>
+                        <div>
+                            {stores.midi.sendProgress}
+                        </div>
+                        <div>
+                            <button onClick={() => stores.midi.abortSend()}>abort</button>
+                        </div>
+                    </div>}
                 </div>
 
                 <div>

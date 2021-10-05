@@ -251,6 +251,12 @@ function getPresetName(data) {
     return String.fromCharCode.apply(null, data.slice(2, 2 + len));
 }
 
+function getMessageTarget(data) {
+    const i = data[0] === SYSEX_START ? IDX + 1 : IDX;
+    console.log(i, data?.[i] ?? '', hs(data));
+    return data?.[i] ?? '';
+}
+
 /**
  * Parse a single sysex message
  * @param data
@@ -293,7 +299,7 @@ function parseSysexMessage(data) {
     }
 
     message[tgt][idx] = {   //NOTE: idx is transformed in string here (Property names must be strings, https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
-        // bytes: data      // FIXME: consolidate data per preset
+        // bytes: data      //TODO: consolidate data per preset
     };
 
     if (data.length === 7) return message;
@@ -741,22 +747,33 @@ function getControlModeSysexMessages(presetIndex, controlId, mode, forceUpdate =
  * @returns {*}
  */
 function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate = false, complete = false) {
+
+    // if (!data[TARGET_PRESET][presetIndex]) return [];
+    // if (!data[TARGET_PRESET][presetIndex][CONTROLS_DATA]) return [];
+    // if (!data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]) return [];
+    if (!data?.[TARGET_PRESET]?.[presetIndex]?.[CONTROLS_DATA]?.[controlId]) return [];
+
     const hasLEDs = !(FOOTSWITCHES.includes(controlId) || EXPPEDALS.includes(controlId));
+
+    const d = data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId];
+
     if (hasLEDs) {
         return [
-            ...getControlModeSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId], forceUpdate, complete),
-            ...getControlStepSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate, complete),
-            ...getControlStepLedSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate, complete)
+            ...getControlModeSysexMessages(presetIndex, controlId, d, forceUpdate, complete),
+            ...getControlStepSysexMessages(presetIndex, controlId, d["steps"], forceUpdate, complete),
+            ...getControlStepLedSysexMessages(presetIndex, controlId, d["steps"], forceUpdate, complete)
         ];
     } else {
         return [
-            ...getControlModeSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId], forceUpdate, complete),
-            ...getControlStepSysexMessages(presetIndex, controlId, data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["steps"], forceUpdate, complete)
+            ...getControlModeSysexMessages(presetIndex, controlId, d, forceUpdate, complete),
+            ...getControlStepSysexMessages(presetIndex, controlId, d["steps"], forceUpdate, complete)
         ];
     }
 }
 
 function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false, complete = false) {
+
+    if (!settings) return [];
 
     let msgs = [];
 
@@ -800,9 +817,13 @@ function getPresetNameSysexMessages(presetIndex, data, complete=false) {
     ];
 
     const s = data[TARGET_PRESET][presetIndex]["name"];
-    msgData.push(s.length);
-    for (let i=0; i < s.length; i++) {
-        msgData.push(s.charCodeAt(i));
+    if (s) {
+        msgData.push(s.length);
+        for (let i=0; i < s.length; i++) {
+            msgData.push(s.charCodeAt(i));
+        }
+    } else {
+        msgData.push(0);
     }
 
     return [buildSysexMessage(msgData, complete)];
@@ -814,6 +835,7 @@ function getMidiSettingUpdateSysexMessages(presetIndex, data, complete= false) {
 }
 
 export function getFullNonGlobalConfigSysex(data, filter = true, fullSysex = false) {
+    if (!data) return []
     const msgs = [];
     Object.keys(data[TARGET_PRESET])
         .filter(presetIndex => !filter || (stores.state.overviewSelection.length < 1) || stores.state.overviewSelection.includes(presetIndex))
@@ -832,6 +854,7 @@ export function getFullNonGlobalConfigSysex(data, filter = true, fullSysex = fal
 export {
     getDataTarget,
     isSysexData,
+    getMessageTarget,
     parseSysexDump,
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
