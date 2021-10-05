@@ -1,6 +1,5 @@
 import React from 'react';
 import {observer} from "mobx-react-lite";
-import {stores} from "./stores";
 import {HashRouter as Router, Route, Link, Switch} from "react-router-dom";
 import {Home} from "./pages/Home";
 import {Preset} from "./pages/Preset";
@@ -73,7 +72,6 @@ export const App = observer((props) => {
                         </header>
 
                         <div className="subheader row align-center">
-                            {/*<Midi only={ANY_MIDI_PORT} autoConnect={PACER_MIDI_PORT_NAME} />*/}
                             <MidiPortsSelect />
                             <BusyIndicator />
                             <div className="grow right-align text-large">

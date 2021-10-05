@@ -25,33 +25,16 @@ function isObject(item) {
 
 export class StateStore {
 
-    // stores = null;
-
-    // this.stores = stores;
-
     data = null;
-    // bytesPresets = [[], [], [],    // current, track, transport
-    //     [], [], [], [], [], [],    // A1..A6
-    //     [], [], [], [], [], [],    // B1..B6
-    //     [], [], [], [], [], [],    // C1..C6
-    //     [], [], [], [], [], []]    // D1..D6
     bytesGlobal = [];
     overviewSelection = [];  // presets selected in overview
     currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
     currentControl = "13";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
     updateMessages = {};
-    // midi = {
-    //     inputs: [],         // array of MIDI inputs (filtered from WebMidi object)
-    //     outputs: [],        // array of MIDI outputs (filtered from WebMidi object)
-    //     input: 0,        // MIDI output port enabled
-    //     output: 0        // MIDI output port enabled,
-    // };
-    // pacerPresent = false;
     busy = false;
     busyMessage = "Receiving data, please wait...";
     bytesExpected = -1;
     progress = -1;    // 0..100
-    //TODO:
     decBase = true;  // true --> decimal base, false --> hex base for number
     extControls = true;
     forceReread = false;
@@ -104,7 +87,6 @@ export class StateStore {
             updateControlStep: action,
             updateMidiSettings: action,
             readPacer: action,
-            // storeBytes: action,
             readFiles: action,
             updatePacer: action,
             sendDump: action,
@@ -114,29 +96,16 @@ export class StateStore {
         this.stores = stores;
 
         this.data = null;
-        // this.bytesPresets = [[], [], [],    // current, track, transport
-        //                      [], [], [], [], [], [],    // A1..A6
-        //                      [], [], [], [], [], [],    // B1..B6
-        //                      [], [], [], [], [], [],    // C1..C6
-        //                      [], [], [], [], [], []]    // D1..D6
         this.bytesGlobal = [];
         this.sendProgress = null;
         this.overviewSelection = [];  // presets selected in overview
         this.currentPresetIndex = "";    // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.currentControl = "13";   // must be a string because it is used as a property name (object key) (https://stackoverflow.com/questions/3633362/is-there-any-way-to-use-a-numeric-type-as-an-object-key)
         this.updateMessages = {};
-        // this.midi = {
-        //     inputs: [],         // array of MIDI inputs (filtered from WebMidi object)
-        //     outputs: [],        // array of MIDI outputs (filtered from WebMidi object)
-        //     input: 0,        // MIDI output port enabled
-        //     output: 0        // MIDI output port enabled,
-        // };
-        // this.pacerPresent = false;
         this.busy = false;
         this.busyMessage = "Receiving data, please wait...";
         this.bytesExpected = -1;
         this.progress = -1;    // 0..100
-        //TODO:
         this.decBase = true;  // true --> decimal base, false --> hex base for number
         this.extControls = true;
         this.forceReread = false;
@@ -147,17 +116,6 @@ export class StateStore {
 
     }
 
-/*
-    clearBytes() {
-        this.bytesPresets = [[], [], [],    // current, track, transport
-            [], [], [], [], [], [],    // A1..A6
-            [], [], [], [], [], [],    // B1..B6
-            [], [], [], [], [], [],    // C1..C6
-            [], [], [], [], [], []]    // D1..D6
-        this.bytesGlobal = [];
-    }
-*/
-
     clear() {
         console.log("state: clear data");
         this.overviewSelection = [];
@@ -165,12 +123,10 @@ export class StateStore {
         this.currentControl = "13";
         this.updateMessages = {};
         this.data = null;
-        // this.clearBytes();
         this.updateMessages = {};
     }
 
     initData() {
-
         Object.values(this.data[TARGET_PRESET])
             .forEach(preset => {
                 preset['name'] = 'toto'
@@ -190,24 +146,6 @@ export class StateStore {
                             });
                     });
             });
-
-        // this.data = parse(this.data.slice());
-
-        // this.bytesPresets = [[], [], [],    // current, track, transport
-        //     [], [], [], [], [], [],    // A1..A6
-        //     [], [], [], [], [], [],    // B1..B6
-        //     [], [], [], [], [], [],    // C1..C6
-        //     [], [], [], [], [], []]    // D1..D6
-        // const presets = [];
-        // for (let i=0; i<27; i++) {
-        //     const preset = [];
-        //     // for (let k=0; k<27; i++) {
-        //     //
-        //     // }
-        //     presets.push(preset);
-        // }
-        // this.bytesPresets = presets;
-        // this.bytesGlobal = [];
     }
 
     /**
@@ -273,9 +211,9 @@ export class StateStore {
 
         // console.log("StateStore.onBusy", busy, busyMessage, bytesExpected, bytesReceived, this.bytesExpected, this.busy);
 
-        let show = busy !== this.busy;
-        show = show || (busyMessage !== null && busyMessage !== this.busyMessage);
-        show = show || (bytesExpected > 0 && bytesExpected !== this.bytesExpected);
+        let show = (busy !== this.busy) ||
+                   ((busyMessage !== null) && (busyMessage !== this.busyMessage)) ||    // buyMessage is not null and has changed
+                   (bytesExpected > 0 && bytesExpected !== this.bytesExpected);     // bytesExpected is not null and has changed
 
         let progress = -1;
         if (this.bytesExpected > 0 && bytesReceived > 0) {
@@ -646,8 +584,4 @@ export class StateStore {
         );
     }
 
-
 } // class StateStore
-
-// export default new StateStore();
-// export const state = new StateStore();

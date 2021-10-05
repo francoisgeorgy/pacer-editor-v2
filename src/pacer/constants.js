@@ -1,13 +1,3 @@
-import {object2Array, sortObject} from "../utils/misc";
-
-export const ANY_MIDI_PORT = ".*";
-
-// export const PACER_MIDI_PORT_NAME = "vmpk.*";            // DEBUG
-// export const PACER_MIDI_INPUT_PORT_NAME = "vmpk.*";      // DEBUG
-// export const PACER_MIDI_OUTPUT_PORT_NAME = "vmpk.*";     // DEBUG
-export const PACER_MIDI_PORT_NAME = "Pacer.*";          // can be a regex
-export const PACER_MIDI_INPUT_PORT_NAME = "Pacer.*";
-export const PACER_MIDI_OUTPUT_PORT_NAME = "Pacer.*";
 
 export const SYSEX_SIGNATURE = [0x00, 0x01, 0x77];
 export const SYSEX_HEADER = [0x7F];
@@ -45,51 +35,6 @@ export const TARGET_NAME = [
     "EXP 1",        // 16   10
     "EXP 2"         // 17   11
 ];
-/*
-export const TARGET_NAME = [
-    null,           // 0
-    "switch 1",     // 1
-    "switch 2",     // 2
-    "switch 3",     // 3
-    "switch 4",     // 4
-    "switch 5",     // 5
-    "switch 6",     // 6
-    null,           // 7
-    "switch A",     // 8
-    "switch B",     // 9
-    "switch C",     // 10    A
-    "switch D",     // 11    B
-    "FS 1",         // 12    C
-    "FS 2",         // 13    D
-    "FS 3",         // 14    E
-    "FS 4",         // 15    F
-    "EXP 1",        // 16   10
-    "EXP 2"         // 17   11
-];
-*/
-
-/*
-export const TARGET_NAME_LONG = [
-    "",
-    "SW-1",
-    "SW-2",
-    "SW-3",
-    "SW-4",
-    "SW-5",
-    "SW-6",
-    "",
-    "SW-A",
-    "SW-B",
-    "SW-C",
-    "SW-D",
-    "Footswitch 1",
-    "Footswitch 2",
-    "Footswitch 3",
-    "Footswitch 4",
-    "Expression Pedal 1",
-    "Expression Pedal 2"
-];
-*/
 
 export const PRESET_TARGET = [
     "Current",      // 0x01
@@ -543,12 +488,14 @@ export const RELAY_MODE_LABEL = [
     "Latching"
 ];
 
+/*
 export const RELAY_MODE_LABEL_SHORT = [
     "Auto",
     "N. Open",
     "N. Closed",
     "Latching"
 ];
+*/
 
 /*
 export const CONTROL_ELEMENT = {

@@ -9,7 +9,7 @@ import "./ImportExport.css";
 
 export const ImportExport = observer(() => {
 
-    const [status, setStatus] = useState(null);
+    // const [status, setStatus] = useState(null);
     const inputOpenFileRef = useRef(null);
 
     function onChangeFile(e) {
@@ -94,14 +94,11 @@ export const ImportExport = observer(() => {
                         <p>This will send the selected presets to the Pacer.</p>
                     </div>
                 </div>
-{/*
-                    {data && stores.midi.deviceConnected && <button className="action-button" onClick={sendDump}>Send to Pacer</button>}
-*/}
 
-                {status &&
+                {/* status &&
                 <div className={`status ${status.severity}`}>
                     {status.message}
-                </div>}
+                </div> */}
 
             </div>
         </div>

@@ -151,7 +151,6 @@ export const Preset = observer(() => {
 
                 {showEditor &&
                 <ControlModeEditor
-                    controlId={controlId}
                     mode={data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]["control_mode"]}
                     onUpdate={(value) => updateControlMode(controlId, value)}/>}
 

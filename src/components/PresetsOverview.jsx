@@ -53,15 +53,10 @@ const Message = observer(({ message, hexDisplay }) => {
         }
     }
 
-    let channel = '';
-    if (hexDisplay) {
-        channel = h(message["channel"]);
-    } else {
-        channel = message["channel"] === 0 ? 'global ch.' : `ch. ${message["channel"]}`;
-    }
+    let channel = hexDisplay ? h(message["channel"]) : message["channel"] === 0 ? 'global ch.' : `ch. ${message["channel"]}`;
 
-    let colorOn = null;
-    let colorOff = null;
+    let colorOn= 0;
+    let colorOff = 0;
     if (message["led_active_color"] || message["led_inactive_color"]) {
         colorOn = message["led_active_color"] === 127 ? 0x00 : message["led_active_color"];
         colorOff = message["led_inactive_color"] === 127 ? 0x00 : message["led_inactive_color"];
