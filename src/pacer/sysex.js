@@ -20,10 +20,8 @@ import {
 } from "./constants";
 import {stores} from "../stores";
 import React from "react";
-import {PresetOverview} from "../components/PresetsOverview";
 
 export const SINGLE_PRESET_EXPECTED_BYTES = 5546;
-// export const ALL_PRESETS_EXPECTED_BYTES = -1;
 export const FULL_DUMP_EXPECTED_BYTES = 139544;
 
 export const SYSEX_START = 0xF0;
@@ -94,11 +92,7 @@ function isSysexData(data) {
 
 // sysex contains START and END markers
 function getDataTarget(sysex) {
-    // if ((data[0] !== SYSEX_START) || (data[data.byteLength - 1] !== SYSEX_END)) return null;
-
     // 00 01 77 7f 01 01 13 01 01 05 47 2d 4d 53 54 7c
-
-    // console.log("getBytesIndex", hs(data));
     return {
         isPresetName: sysex[TGT+1] === TARGET_PRESET && sysex[OBJ+1] === 1,
         isPreset: sysex[TGT+1] === TARGET_PRESET,
@@ -106,12 +100,6 @@ function getDataTarget(sysex) {
         presetNum: sysex[IDX+1]
     }
 }
-
-/*
-function getManufacturerName(id) {
-    return id in midi_name ? midi_name[id] : "manufacturer unknown";
-}
-*/
 
 function getControlStep(data) {
 
@@ -427,30 +415,8 @@ function parseSysexMessage(data) {
 
 
     if (obj_type === "all") {
-
         message[tgt][idx]["all"] = {};
-
-        // // which element?
-        // let e = data[ELM];
-        //
-        // if (e >= 0x01 && e <= 0x60) {
-        //
-        //     // SETTINGS
-        //     if (data.length > ELM+19) {
-        //         let s = getMidiSetting(data.slice(ELM, ELM + 20));
-        //         message[tgt][idx]["midi"][s.index] = s.config;
-        //     } else {
-        //         console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
-        //     }
-        //
-        // } else {
-        //     console.warn(`parseSysexMessage: unknown element: ${h(e)}`);
-        //     return null;
-        // }
-
     }
-
-    // console.log(JSON.stringify(message));
 
     return message;
 
@@ -467,7 +433,6 @@ function parseSysexDump(data) {
     if (data === null) return null;
 
     let presets = {};   // Collection of presets. The key is the preset's index. The value is the preset.
-    // let global = {};    // global conf
 
     let i = 0;
     let cont = true;
@@ -492,30 +457,11 @@ function parseSysexDump(data) {
 
         let config = parseSysexMessage(data.slice(i, k));  // data.slice(i, k) are the data between SYSEX_START and SYSEX_END
 
-        // console.log("parseSysexDump", config);
-
-
-        // const p = parseMessage(data.slice(i, k));
-        // console.log("parsed", p);
-
         if (config) {
             mergeDeep(presets, config);
-
-            // const tgt = parseInt(Object.keys(config)[0], 10);
-            // const idx = parseInt(Object.keys(config[tgt])[0], 10);
-            // console.log("parseSysexDump", tgt, idx);
-            // if (tgt === TARGET_PRESET) {
-            //     this.bytesPresets[`${idx}`].push(data.slice(i, k));
-            // } else if (tgt === TARGET_GLOBAL) {
-            //     this.bytesGlobal.push(data.slice(i, k));
-            // }
-            // console.log("bytesPresets", this.bytesPresets);
-
         }
 
     } // while
-
-    // console.log("parseSysexDump", JSON.stringify(presets));
 
     return presets;
 }
