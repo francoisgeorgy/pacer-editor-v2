@@ -46,3 +46,45 @@
 
 .status.info {
 }
+
+.import-export-actions {
+    margin: 20px 0;
+    /*width: 750px;*/
+    display: flex;
+    /*justify-content: space-between;*/
+    /*margin: 10px 0 20px 0;*/
+    /*display: grid;*/
+    /*grid-template-columns: repeat(3, 1fr);*/
+    /*justify-content: start;*/
+    /*grid-column-gap: 50px;*/
+    /*justify-items: stretch;*/
+    /*align-items: stretch;*/
+}
+
+.import-export-actions > div {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-right: 30px;
+}
+
+.import-export-actions > div:last-child {
+    margin-right: 0;
+}
+
+.import-export-actions .action-button {
+    margin: 0;
+}
+
+.import-export-actions .action-name {
+    font-weight: bold;
+}
+
+.import-export ul {
+    margin: 0 0 0 20px;
+    padding: 0;
+}
+
+.import-export ul li {
+    margin: 5px 0;
+    padding: 0;
+}

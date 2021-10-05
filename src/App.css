@@ -54,6 +54,10 @@
     color: #333;
 }
 
+.no-border {
+    border: none!important;
+}
+
 h1 {
     font-size: 1.75rem;
     margin: 8px 0;
