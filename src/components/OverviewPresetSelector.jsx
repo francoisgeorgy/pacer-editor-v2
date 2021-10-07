@@ -59,8 +59,8 @@ export const OverviewPresetSelector = observer(() => {
                 <Selector xyId={"CURRENT"} presetIndex={"0"} name={currName}
                           hasData={data && data[TARGET_PRESET] && data[TARGET_PRESET][0]}
                           onClick={selectPreset} key={0} />
-                <div className="span-2">
-                    <button className={`ml-20 button-as-link ${stores.state.noneSelected() ? 'dimmed' : ''}`} onClick={clearSelection}>select none</button>
+                <div className="span-2 pl-20">
+                    <button className={`button-as-link ${stores.state.noneSelected() ? 'dimmed' : ''}`} onClick={clearSelection}>select none</button>
                     <button className={`button-as-link ${stores.state.allSelected() ? 'dimmed' : ''}`} onClick={() => stores.state.selectAllPresets()}>select all</button>
                 </div>
 

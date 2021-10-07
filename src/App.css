@@ -236,6 +236,10 @@ h3 {
     align-self: center;
 }
 
+.self-center {
+    justify-self: center;
+}
+
 .grow {
     flex-grow: 1;
 }
@@ -657,6 +661,7 @@ button.disabled:hover {
     background: none;
     border: none;
     color: blue;
+    font-size: 1rem;
 }
 
 .button-as-link.dimmed {

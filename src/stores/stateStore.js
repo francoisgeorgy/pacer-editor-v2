@@ -90,7 +90,9 @@ export class StateStore {
             readFiles: action,
             updatePacer: action,
             sendDump: action,
-            deepMergeData: action
+            deepMergeData: action,
+            setChanged: action,
+            clearUpdateMessages: action
         });
 
         this.stores = stores;
@@ -115,12 +117,16 @@ export class StateStore {
 
     }
 
+    clearUpdateMessages() {
+        this.updateMessages = {};
+    }
+
     clear() {
         console.log("state: clear data");
         this.overviewSelection = [];
         this.currentPresetIndex = "";
         this.currentControl = "13";
-        this.updateMessages = {};
+        this.clearUpdateMessages();
         this.data = null;
         this.updateMessages = {};
     }
@@ -145,6 +151,10 @@ export class StateStore {
                             });
                     });
             });
+    }
+
+    setChanged(bool) {
+        this.changed = bool;
     }
 
     /**
@@ -423,34 +433,29 @@ export class StateStore {
 
         const P = this.currentPresetIndex;
 
-        // console.log("updateMidiSettings", settingIndex, dataType, dataIndex, value, v, P);
+        if (dataType === "data") {
+            this.data[TARGET_PRESET][P]["midi"][settingIndex]["data"][dataIndex] = v;
+        } else {
+            this.data[TARGET_PRESET][P]["midi"][settingIndex][dataType] = v;
+        }
 
-        // this.setState(
-        //     produce(draft => {
-                if (dataType === "data") {
-                    this.data[TARGET_PRESET][P]["midi"][settingIndex]["data"][dataIndex] = v;
-                } else {
-                    this.data[TARGET_PRESET][P]["midi"][settingIndex][dataType] = v;
-                }
-                if (dataType === "msg_type") {
-                    if (v === MSG_CTRL_OFF) {
-                        this.data[TARGET_PRESET][P]["midi"][settingIndex]["active"] = 0;
-                    } else {
-                        this.data[TARGET_PRESET][P]["midi"][settingIndex]["active"] = 1;
-                    }
-                }
-                this.data[TARGET_PRESET][P]["midi"][settingIndex]["changed"] = true;
+        if (dataType === "msg_type") {
+            if (v === MSG_CTRL_OFF) {
+                this.data[TARGET_PRESET][P]["midi"][settingIndex]["active"] = 0;
+            } else {
+                this.data[TARGET_PRESET][P]["midi"][settingIndex]["active"] = 1;
+            }
+        }
 
-                this.changed = true;
+        this.data[TARGET_PRESET][P]["midi"][settingIndex]["changed"] = true;
 
-                if (!this.updateMessages.hasOwnProperty(P)) this.updateMessages[P] = {};
-                if (!this.updateMessages[P].hasOwnProperty("midi")) this.updateMessages[P]["midi"] = {};
+        this.changed = true;
 
-                //FIXME: update the methods that read updateMessages to allow object or array
-                this.updateMessages[P]["midi"]["dummy"] = getMidiSettingUpdateSysexMessages(P, this.data);
+        if (!this.updateMessages.hasOwnProperty(P)) this.updateMessages[P] = {};
+        if (!this.updateMessages[P].hasOwnProperty("midi")) this.updateMessages[P]["midi"] = {};
 
-            // })
-        // );
+        //TODO: update the methods that read updateMessages to allow object or array
+        this.updateMessages[P]["midi"]["dummy"] = getMidiSettingUpdateSysexMessages(P, this.data);
     }
 
 /*
@@ -553,7 +558,6 @@ export class StateStore {
     }
 
     updatePacer() {
-        //TODO: externalize this method
 
         this.showBusy({busy: true, busyMessage: "write Preset..."});
 
@@ -575,11 +579,10 @@ export class StateStore {
             }
         );
 
-        //TODO: update this code
         setTimeout(
             () => {
-                this.changed = false;
-                this.updateMessages = {};
+                this.setChanged(false);
+                this.clearUpdateMessages();
                 this.stores.midi.readPreset(this.currentPresetIndex);
             },
             1000
