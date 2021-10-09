@@ -393,11 +393,11 @@ export class StateStore {
 
         console.log(`updateControlStep(${controlId}, ${stepIndex}, ${dataType}, ${dataIndex}, ${value})`);
 
-        let v = parseInt(value, 10);
+        let v = value === '' ? 0 : parseInt(value, 10);
 
-        // const data = this.props.stores.state.data;
-        // const presetIndex = this.props.stores.state.currentPreset;
-        // const updateMessages = this.props.stores.state.updateMessages;
+        if (isNaN(v)) {
+            return;
+        }
 
         if (dataType === "data") {
             this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
