@@ -23,7 +23,7 @@ export const PresetMidi = observer(() => {
     return (
         <div className="content">
 
-            <PresetSelectorAndButtons showClearButton={false} title="Presets configuration" subtitle="Select the preset to configure:" />
+            <PresetSelectorAndButtons showClearButton={false} title="Preset recall MIDI Configuration" subtitle="Select the preset to configure:" />
 
             {showEditor &&
             <div className="content-row-content">
@@ -31,15 +31,10 @@ export const PresetMidi = observer(() => {
                     {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold"> {data[TARGET_PRESET][presetIndex]["name"]}</span>
                 </h3>
                 {/*<h2>Preset MIDI settings</h2>*/}
+                <div className="mt-20 mb-20">
+                    You can define up to 16 MIDI messages or relay switches that will be activated instantly when the preset is recalled.
+                </div>
             </div>}
-
-            {showEditor && <div className="edit-section-title control-name no-border">
-                Preset Recall MIDI Configuration:
-            </div>}
-
-            <div className="mb-10">
-                You can define up to 16 MIDI messages or relay switches that will be activated instantly when the preset is recalled.
-            </div>
 
             {showEditor && <MidiSettingsEditor />}
 

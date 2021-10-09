@@ -81,6 +81,9 @@ export const App = observer((props) => {
 
                         <div className="subheader row align-center">
                             <MenuButtons />
+                            <div className="grow right-align text-large">
+                                <a className="external" href="https://studiocode.dev/resources/midi-cc/" target="midi_cc">MIDI CC cheat sheet</a>
+                            </div>
                         </div>
 
                         <div className="main-content-wrapper">
