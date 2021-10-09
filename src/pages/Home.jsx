@@ -4,7 +4,7 @@ import "./Home.css";
 export const Home = () => {
 
     return (
-        <div className="content home">
+        <div className="content home mt-40">
 
             <h1>Requirements</h1>
 
