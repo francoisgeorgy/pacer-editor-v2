@@ -21,7 +21,8 @@ export default {
             ]
         }),
         VitePWA({
-            mode: 'development',
+            // mode: 'development',
+            mode: 'production',
             base: '/pacer-editor/',
             registerType: 'autoUpdate',
             includeAssets: [
@@ -29,9 +30,10 @@ export default {
                 'patches/*'
             ],
             manifest: {
-                name: 'Vite PWA Lab',
-                short_name: 'Vite PWA Lab',
-                theme_color: '#ffffff',
+                name: 'Pacer Editor by StudioCode.dev',
+                short_name: 'Pacer Editor',
+                description: 'Configure your Nektar Pacer MIDI controller with your web browser.',
+                theme_color: '#000000',
                 icons: [
                     {
                         src: 'pwa-192x192.png',
