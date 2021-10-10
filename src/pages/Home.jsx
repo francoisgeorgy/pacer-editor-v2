@@ -43,26 +43,25 @@ export const Home = () => {
 
             <h1>Editing presets</h1>
             <div className="doc">
-                <p>The preset <span className="strong">CUR</span> is the <span className="italic fluo">current</span> preset.
-                    When you edit preset <span className="strong">CUR</span> your changes are immediately applied.</p>
-                <p>When you edit any other presets, you edit the <span className="fluo">saved</span> settings of the preset
+                <p>When you edit the <span className="strong">CURRENT</span> preset, your changes are immediately applied.</p>
+                <p>When you edit any other presets, you edit the <span className="fluo">saved</span> configuration of the preset
                     and your changes will only be applied when you <span className="fluo">load</span> this preset in the Pacer.</p>
                 <p>It is currently not possible to remotely force the Pacer to load a specific preset.</p>
                 <div>
                     <h3>Example 1:</h3>
-                    <p>The currently loaded preset (CUR) is preset <span className="strong">A5</span>.</p>
+                    <p>The currently loaded preset (CURRENT) is preset <span className="strong">A5</span>.</p>
                     <p>You edit the preset <span className="strong">A5</span>.</p>
-                    <p>After you save your modifications, the display will show dots. That means the current preset does not reflect the saved preset anymore.
+                    <p>After you save your modifications, the display will show blinking dots. That means the current preset does not reflect the saved preset anymore.
                         You have to <span className="fluo">reload</span> the preset to be able to use your updated version:</p>
-                    <p>- long-press <span className="strong">Preset</span> switch, then press switch <span className="strong">A</span>, then press switch <span className="strong">5</span>.</p>
+                    <p>- long-press the <span className="strong">Preset</span> switch, then press <span className="strong">A</span>, and finally press <span className="strong">5</span>.</p>
                 </div>
 
                 <div>
-                    <h3>Example 1:</h3>
-                    <p>The currently loaded preset (CUR) is preset <span className="strong">A1</span>.</p>
+                    <h3>Example 2:</h3>
+                    <p>The currently loaded preset (CURRENT) is preset <span className="strong">A1</span>.</p>
                     <p>You edit the preset <span className="strong">D3</span>.</p>
                     <p>After you save your modifications of preset <span className="strong">D3</span>, if you want to use it, of course you have to load it:</p>
-                    <p>- long-press <span className="strong">Preset</span> switch, then press switch <span className="strong">D</span>, then press switch <span className="strong">3</span>.</p>
+                    <p>- long-press the <span className="strong">Preset</span> switch, then press <span className="strong">D</span>, and finally press <span className="strong">3</span>.</p>
                 </div>
 
             </div>
@@ -292,7 +291,7 @@ export const Home = () => {
             <div className="doc">
                 <p>This editor is an Open Source project. You are welcome to contribute.</p>
                 <p>The source-code is hosted
-                by GitHub: <a href="https://github.com/francoisgeorgy/pacer-editor" target="_blank" rel="noopener noreferrer">pacer-editor</a></p>
+                by GitHub: <a href="https://github.com/francoisgeorgy/pacer-editor-v2" target="_blank" rel="noopener noreferrer">pacer-editor-v2</a></p>
                 <p>To contribute your bug fixes, new features, etc.: 1) fork the project, 2) create a pull-request.</p>
             </div>
 
