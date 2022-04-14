@@ -1,17 +1,18 @@
 import React from "react";
 import {action, makeAutoObservable} from "mobx";
-import {MSG_CTRL_OFF, TARGET_PRESET} from "../pacer/constants";
+import {ALL_CONTROLS, MSG_CTRL_OFF, TARGET_PRESET} from "../pacer/constants";
 import {
     getPresetNameSysexMessages,
     CONTROLS_DATA,
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
-    parseSysexDump
+    parseSysexDump, MIDI_DATA, STEPS_DATA
 } from "../pacer/sysex";
 import {MAX_FILE_SIZE} from "../utils/misc";
 import {hs} from "../utils/hexstring";
 import {presetIndexToXY} from "../pacer/utils";
+import {stores} from "./index";
 
 /**
  * https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge/34749873#34749873
@@ -92,7 +93,8 @@ export class StateStore {
             sendDump: action,
             deepMergeData: action,
             setChanged: action,
-            clearUpdateMessages: action
+            clearUpdateMessages: action,
+            copyFromTo: action
         });
 
         this.stores = stores;
@@ -135,10 +137,10 @@ export class StateStore {
         Object.values(this.data[TARGET_PRESET])
             .forEach(preset => {
                 preset['name'] = 'toto'
-                Object.values(preset['controls'])
+                Object.values(preset[CONTROLS_DATA])
                     .forEach(control => {
                         control['control_mode'] = 0;
-                        Object.values(control['steps'])
+                        Object.values(control[STEPS_DATA])
                             .forEach(step => {
                                 step["channel"] = 0;
                                     step["msg_type"] = MSG_CTRL_OFF;
@@ -314,6 +316,27 @@ export class StateStore {
         this.currentPresetIndex = presetIndex;
     }
 
+    updatePresetName(presetIndex, name) {
+
+        if (name === undefined || name === null) return;
+
+        if (name.length > 5) {
+            console.warn(`Presets.updateName: name too long: ${name}`);
+            return;    // Calling .setState with null no longer triggers an update in React 16.
+        }
+
+        this.data[TARGET_PRESET][presetIndex]["name"] = name;
+        this.data[TARGET_PRESET][presetIndex]["changed"] = true;     //TODO: used?
+
+
+        if (!this.updateMessages.hasOwnProperty(presetIndex)) this.updateMessages[presetIndex] = {};
+        if (!this.updateMessages[presetIndex].hasOwnProperty("name")) this.updateMessages[presetIndex]["name"] = {};
+
+        this.updateMessages[presetIndex]["name"]["dummy"] = getPresetNameSysexMessages(presetIndex, this.data);
+
+        this.changed = true;
+    }
+
     selectControl(controlIndex) {
         // console.log("selectControl", controlIndex, typeof controlIndex);
         this.currentControl = controlIndex;
@@ -341,27 +364,6 @@ export class StateStore {
         this.updateMessages[this.currentPresetIndex][CONTROLS_DATA][controlId] = msg;
     }
 
-    updatePresetName(presetIndex, name) {
-
-        if (name === undefined || name === null) return;
-
-        if (name.length > 5) {
-            console.warn(`Presets.updateName: name too long: ${name}`);
-            return;    // Calling .setState with null no longer triggers an update in React 16.
-        }
-
-        this.data[TARGET_PRESET][presetIndex]["name"] = name;
-        this.data[TARGET_PRESET][presetIndex]["changed"] = true;     //TODO: used?
-
-
-        if (!this.updateMessages.hasOwnProperty(presetIndex)) this.updateMessages[presetIndex] = {};
-        if (!this.updateMessages[presetIndex].hasOwnProperty("name")) this.updateMessages[presetIndex]["name"] = {};
-
-        this.updateMessages[presetIndex]["name"]["dummy"] = getPresetNameSysexMessages(presetIndex, this.data);
-
-        this.changed = true;
-    }
-
     /**
      * dataIndex is only used when dataType == "data"
      */
@@ -371,15 +373,15 @@ export class StateStore {
 
         let v = parseInt(value, 10);
 
-        this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["msg_type"] = v;
+        this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["msg_type"] = v;
 
         if (v === MSG_CTRL_OFF) {
-            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["active"] = 0;
+            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["active"] = 0;
         } else {
-            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["active"] = 1;
+            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["active"] = 1;
         }
 
-        this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["changed"] = true;
+        this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["changed"] = true;
 
         this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(preset, controlId, this.data));
 
@@ -400,23 +402,23 @@ export class StateStore {
         }
 
         if (dataType === "data") {
-            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["data"][dataIndex] = v;
+            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["data"][dataIndex] = v;
         } else {
-            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex][dataType] = v;
+            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex][dataType] = v;
         }
 
         // if (dataType === "msg_type") {
         //     if (v === MSG_CTRL_OFF) {
-        //         this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["active"] = 0;
+        //         this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["active"] = 0;
         //     } else {
-        //         this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["active"] = 1;
+        //         this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["active"] = 1;
         //     }
         // }
 
         if (dataType.startsWith("led_")) {
-            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["led_changed"] = true;
+            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["led_changed"] = true;
         } else {
-            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId]["steps"][stepIndex]["changed"] = true;
+            this.data[TARGET_PRESET][preset][CONTROLS_DATA][controlId][STEPS_DATA][stepIndex]["changed"] = true;
         }
 
         this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(preset, controlId, this.data));
@@ -434,29 +436,179 @@ export class StateStore {
         const P = this.currentPresetIndex;
 
         if (dataType === "data") {
-            this.data[TARGET_PRESET][P]["midi"][settingIndex]["data"][dataIndex] = v;
+            this.data[TARGET_PRESET][P][MIDI_DATA][settingIndex]["data"][dataIndex] = v;
         } else {
-            this.data[TARGET_PRESET][P]["midi"][settingIndex][dataType] = v;
+            this.data[TARGET_PRESET][P][MIDI_DATA][settingIndex][dataType] = v;
         }
 
         if (dataType === "msg_type") {
             if (v === MSG_CTRL_OFF) {
-                this.data[TARGET_PRESET][P]["midi"][settingIndex]["active"] = 0;
+                this.data[TARGET_PRESET][P][MIDI_DATA][settingIndex]["active"] = 0;
             } else {
-                this.data[TARGET_PRESET][P]["midi"][settingIndex]["active"] = 1;
+                this.data[TARGET_PRESET][P][MIDI_DATA][settingIndex]["active"] = 1;
             }
         }
 
-        this.data[TARGET_PRESET][P]["midi"][settingIndex]["changed"] = true;
+        this.data[TARGET_PRESET][P][MIDI_DATA][settingIndex]["changed"] = true;
 
         this.changed = true;
 
         if (!this.updateMessages.hasOwnProperty(P)) this.updateMessages[P] = {};
-        if (!this.updateMessages[P].hasOwnProperty("midi")) this.updateMessages[P]["midi"] = {};
+        if (!this.updateMessages[P].hasOwnProperty(MIDI_DATA)) this.updateMessages[P][MIDI_DATA] = {};
 
         //TODO: update the methods that read updateMessages to allow object or array
-        this.updateMessages[P]["midi"]["dummy"] = getMidiSettingUpdateSysexMessages(P, this.data);
+        this.updateMessages[P][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(P, this.data);
     }
+
+    clearPreset(presetId) {
+
+        if (presetId < 0) return false;
+
+        console.log(`clear preset ${presetId}`);
+
+        if (this.data && this.data[TARGET_PRESET][presetId]) {
+
+            if (!this.updateMessages.hasOwnProperty(presetId)) this.updateMessages[presetId] = {};
+            if (!this.data[TARGET_PRESET][presetId]) this.data[TARGET_PRESET][presetId] = {};
+
+            this.data[TARGET_PRESET][presetId]["name"] = "";
+            if (!this.updateMessages[presetId].hasOwnProperty("name")) this.updateMessages[presetId]["name"] = {};
+            this.updateMessages[presetId]["name"]["dummy"] = getPresetNameSysexMessages(presetId, this.data);
+
+            Object.values(this.data[TARGET_PRESET][presetId][CONTROLS_DATA])
+                .forEach(control => {
+                    control['control_mode'] = 0;
+                    Object.values(control[STEPS_DATA])
+                        .forEach(step => {
+                            step["channel"] = 0;
+                            step["msg_type"] = MSG_CTRL_OFF;
+                            step["data"] = [0,0,0];
+                            step["active"] = 0;
+                            step["led_midi_ctrl"] = 0;
+                            step["led_active_color"] = 0;
+                            step["led_inactive_color"] = 0;
+                            step["led_num"] = 0;
+                        });
+                    this.addControlUpdateMessage(control, getControlUpdateSysexMessages(presetId, control, this.data));
+                });
+
+            this.data[TARGET_PRESET][presetId][MIDI_DATA] = {};
+            for (let k=0; k<16; k++) {
+                this.data[TARGET_PRESET][presetId][MIDI_DATA][k] = {
+                    channel: 0,
+                    msg_type: MSG_CTRL_OFF,
+                    data: [0, 0, 0]
+                };
+            }
+            if (!this.updateMessages[presetId].hasOwnProperty(MIDI_DATA)) this.updateMessages[presetId][MIDI_DATA] = {};
+            this.updateMessages[presetId][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(presetId, this.data);
+
+            // this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetId, controlId, this.data));
+
+            this.data[TARGET_PRESET][presetId]["changed"] = true;
+            this.changed = true;
+        }
+    }
+
+    /**
+     *
+     * @param presetIdFrom
+     * @param presetIdTo
+     * @return {boolean}
+     */
+    copyFromTo(presetIdFrom, presetIdTo) {
+
+        if (presetIdFrom < 0 || presetIdTo < 0) return false;
+
+        console.log(`copy preset ${presetIdFrom} to ${presetIdTo}`);
+        console.log(JSON.stringify(this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA]));
+
+        if (this.data && this.data[TARGET_PRESET][presetIdFrom]) {
+
+            if (!this.updateMessages.hasOwnProperty(presetIdTo)) this.updateMessages[presetIdTo] = {};
+            if (!this.data[TARGET_PRESET][presetIdTo]) this.data[TARGET_PRESET][presetIdTo] = {};
+
+            // Name:
+
+            this.updatePresetName(presetIdTo, this.data[TARGET_PRESET][presetIdFrom]["name"]);
+
+            // Controls:
+
+            this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA] = JSON.parse(JSON.stringify(this.data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA]));
+
+            ALL_CONTROLS.forEach(controlId => {
+                this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetIdTo, control, this.data));
+            });
+
+            // Preset MIDI:
+
+            this.data[TARGET_PRESET][presetIdTo][MIDI_DATA] = JSON.parse(JSON.stringify(this.data[TARGET_PRESET][presetIdFrom][MIDI_DATA]));
+
+            if (!this.updateMessages[presetIdTo].hasOwnProperty(MIDI_DATA)) this.updateMessages[presetIdTo][MIDI_DATA] = {};
+            this.updateMessages[presetIdTo][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(presetIdTo, this.data);
+
+            // CONTROLS_WITH_SEQUENCE.forEach(controlId => {
+            //     // data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = Object.assign({}, data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]);
+            //     // ugly / deep copy without shallow references:
+            //     this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = JSON.parse(JSON.stringify(this.data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]));
+            //     updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, this.data, true);
+            // });
+
+/*
+            Object.values(this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA])
+                .forEach(control => {
+                    control['control_mode'] = 0;
+                    Object.values(control['steps'])
+                        .forEach(step => {
+                            step["channel"] = 0;
+                            step["msg_type"] = MSG_CTRL_OFF;
+                            step["data"] = [0,0,0];
+                            step["active"] = 0;
+                            step["led_midi_ctrl"] = 0;
+                            step["led_active_color"] = 0;
+                            step["led_inactive_color"] = 0;
+                            step["led_num"] = 0;
+                        });
+                });
+*/
+
+            this.data[TARGET_PRESET][presetIdTo]["changed"] = true;
+            this.changed = true;
+        }
+        /*
+                const { data, updateMessages } = this.state;
+
+                if (data && data[TARGET_PRESET][presetIdFrom]) {
+
+                    if (!data[TARGET_PRESET][presetIdTo]) data[TARGET_PRESET][presetIdTo] = {};
+                    data[TARGET_PRESET][presetIdTo]["changed"] = true;
+
+                    if (!updateMessages.hasOwnProperty(presetIdTo)) updateMessages[presetIdTo] = {};
+                    if (!updateMessages[presetIdTo].hasOwnProperty(CONTROLS_DATA)) updateMessages[presetIdTo][CONTROLS_DATA] = {};
+
+                    //
+                    // Only copy CONTROLS (for the current version)
+                    //
+                    //FIXME: copy EXP and FS config
+                    CONTROLS_WITH_SEQUENCE.forEach(controlId => {
+                        // data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = Object.assign({}, data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]);
+                        // ugly / deep copy without shallow references:
+                        data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = JSON.parse(JSON.stringify(data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]));
+                        updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, data, true);
+                    });
+                    // Object.assign(data[TARGET_PRESET][presetIdTo], data[TARGET_PRESET][presetIdFrom]);
+
+                    //we do not copy the name
+                    //updateMessages[presetIdTo]["name"] = buildPresetNameSysex(presetIdTo, data);
+
+                    // CONTROLS_WITH_SEQUENCE.forEach(controlId => updateMessages[presetIdTo][CONTROLS_DATA][controlId] = getControlUpdateSysexMessages(presetIdTo, controlId, data, true));
+
+                    this.setState({data, updateMessages, changed: true});
+                }
+        */
+
+    }
+
 
 /*
     sendAny = msg => {

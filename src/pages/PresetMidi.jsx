@@ -6,6 +6,7 @@ import {MidiSettingsEditor} from "../components/MidiSettingsEditor";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import {presetIndexToXY} from "../pacer/utils";
 import "./Preset.css";
+import {MIDI_DATA} from "../pacer/sysex";
 
 export const PresetMidi = observer(() => {
 
@@ -17,7 +18,7 @@ export const PresetMidi = observer(() => {
         showEditor = (TARGET_PRESET in data) &&
                      (presetIndex in data[TARGET_PRESET]) &&
                      ("midi" in data[TARGET_PRESET][presetIndex]) &&
-                     (Object.keys(data[TARGET_PRESET][presetIndex]["midi"]).length === 16)
+                     (Object.keys(data[TARGET_PRESET][presetIndex][MIDI_DATA]).length === 16)
     }
 
     return (

@@ -10,17 +10,20 @@ import {ControlModeEditor} from "../components/ControlModeEditor";
 import {PresetNameEditor} from "../components/PresetNameEditor";
 import {isVal} from "../utils/misc";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
-import {presetIndexToXY} from "../pacer/utils";
+import {presetIndexToXY, presetXYToIndex} from "../pacer/utils";
 import {PresetOverview} from "../components/PresetsOverview";
 import ReactSwitch from "../components/switch";
 import "./Preset.css";
+import * as Note from "tonal-note";
+// var clone = require('clone');
 
 //FIXME: fix this:
 setAutoFreeze(false);   // needed to be able to update name and copy a preset at the same time. Otherwise immerjs freez the state in updateMessageName() and it is no longer possible to copy a preset.
 
 export const Preset = observer(() => {
 
-    const [copyPresetFrom, setCopyPresetFrom] = useState("-1");
+    // const [copyPresetFrom, setCopyPresetFrom] = useState("-1");
+    const [copyFrom, setCopyFrom] = useState(-1);
 
     /**
      * dataIndex is only used when dataType == "data"
@@ -30,6 +33,22 @@ export const Preset = observer(() => {
     }
 
     function doCopyPresetFrom(presetIdFrom, presetIdTo) {
+
+        console.log(`copy preset ${presetIdFrom} to ${presetIdTo}`);
+
+        if (presetIdFrom < 0 || presetIdTo < 0) return false;
+
+        // // stores.state.data[1] = clone(stores.state.data[7]);
+        // const d = stores.state.data;
+        // if (d && d[TARGET_PRESET][presetIdFrom]) {
+        //     if (!d[TARGET_PRESET][presetIdTo]) d[TARGET_PRESET][presetIdTo] = {};
+        //     d[TARGET_PRESET][presetIdTo]["changed"] = true;
+        //
+        //     d[TARGET_PRESET][presetIdTo]["name"] = d[TARGET_PRESET][presetIdFrom]["name"];
+        // }
+
+        stores.state.copyFromTo(presetIdFrom, presetIdTo);
+
         //FIXME: use immerjs
 /*
         const { data, updateMessages } = this.state;
@@ -99,10 +118,31 @@ export const Preset = observer(() => {
 
             {data?.[TARGET_PRESET]?.[presetIndex] &&
             <div className="content-row-content">
-                {/*<h2>Preset {presetLabel}</h2>*/}
+{/*
                 <h3 className="preset-title">
                     {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold"> {data[TARGET_PRESET][presetIndex]["name"]}</span>
                 </h3>
+*/}
+                <div className="preset-title-row">
+                    <div className="preset-name">
+                        {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold">{data[TARGET_PRESET][presetIndex]["name"]}</span>
+                    </div>
+                    <div>
+                        <button onClick={() => stores.state.clearPreset(presetIndex)}>Clear</button>
+                        <button className="ml-20" onClick={() => doCopyPresetFrom(copyFrom, presetIndex)}>Copy from:</button> <select onChange={e => setCopyFrom(parseInt(e.target.value))}>
+                            <option value="-1">-</option>
+                            {
+                                Array.from(Array(24).keys()).map(
+                                    i => {
+                                        let index = i+1;
+                                        let hasData = data && data[TARGET_PRESET] && data[TARGET_PRESET][index];
+                                        let name = hasData ? data[TARGET_PRESET][index]["name"] : "";
+                                        return <option key={i} value={i+1}>{presetIndexToXY(i+1)} {name}</option>
+                                    })
+                            }
+                    </select>
+                    </div>
+                </div>
                 <PresetNameEditor />
             </div>}
 
