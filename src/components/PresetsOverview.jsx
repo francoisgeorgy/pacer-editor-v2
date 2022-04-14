@@ -176,7 +176,7 @@ const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {
 
     return (
         <h3 className="preset-title" onClick={gotoPreset} title="click to edit">
-            {presetIndexToXY(parseInt(presetIndex, 10))}<span className="bullet">•</span><span className="bold"> {presetName}</span>{additionalInfos}
+            {presetIndexToXY(parseInt(presetIndex, 10))}<span className="bullet">•</span><span className="bold as-link"> {presetName}</span>{additionalInfos}
         </h3>
     );
 

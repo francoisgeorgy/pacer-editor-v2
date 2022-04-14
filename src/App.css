@@ -15,6 +15,17 @@
     font-style: italic;
 }
 
+/*
+.blue {
+    color: blue;
+}
+*/
+
+.as-link {
+    cursor: pointer;
+    color: blue;
+}
+
 .bold,
 .strong {
     font-weight: bold;
