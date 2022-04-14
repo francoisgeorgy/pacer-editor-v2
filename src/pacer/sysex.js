@@ -30,6 +30,7 @@ export const SYSEX_END = 0xF7;
 // data structure keys:
 export const CONTROLS_DATA = "controls";
 export const STEPS_DATA = "steps";
+export const MIDI_DATA = "midi";
 
 // offsets from start of sysex data, right after SYSEX_START
 const CMD = 4;
@@ -317,7 +318,7 @@ function parseSysexMessage(data) {
         (obj >= CONTROL_EXPRESSION_PEDAL_1 && obj <= CONTROL_EXPRESSION_PEDAL_2)) {
         obj_type = "control";
     } else if (obj === CONTROL_MIDI) {
-        obj_type = "midi";
+        obj_type = MIDI_DATA;
     } else if (obj === CONTROL_ALL) {
         obj_type = "all";
     } else {
@@ -395,9 +396,9 @@ function parseSysexMessage(data) {
 
     }
 
-    if (obj_type === "midi") {
+    if (obj_type === MIDI_DATA) {
 
-        message[tgt][idx]["midi"] = {};
+        message[tgt][idx][MIDI_DATA] = {};
 
         // which element?
         let e = data[ELM];
@@ -407,7 +408,7 @@ function parseSysexMessage(data) {
             // SETTINGS
             if (data.length > ELM+19) {
                 let s = getMidiSetting(data.slice(ELM, ELM + 20));
-                message[tgt][idx]["midi"][s.index] = s.config;
+                message[tgt][idx][MIDI_DATA][s.index] = s.config;
             } else {
                 console.warn(`parseSysexMessage: data does not contains steps. data.length=${data.length}`, hs(data));
             }
@@ -831,7 +832,7 @@ function getPresetNameSysexMessages(presetIndex, data, complete=false) {
 
 
 function getMidiSettingUpdateSysexMessages(presetIndex, data, complete= false) {
-    return getMidiSettingsSysexMessages(presetIndex, data[TARGET_PRESET][presetIndex]["midi"], true, complete);
+    return getMidiSettingsSysexMessages(presetIndex, data[TARGET_PRESET][presetIndex][MIDI_DATA], true, complete);
 }
 
 export function getFullNonGlobalConfigSysex(data, filter = true, fullSysex = false) {

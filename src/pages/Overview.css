@@ -17,14 +17,40 @@
 h3.preset-title {
     /*margin-top: 25px;*/
     margin-top: 10px;
-    font-size: 1.5rem;
     background-color: #eceaf5;
     border-top: 1px solid #bbb;
     padding-left: 10px;
     margin-bottom: 15px;
+    font-size: 1.5rem;
     cursor: pointer;
     display: flex;
 }
+
+.preset-title-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    background-color: #eceaf5;
+    border-top: 1px solid #bbb;
+    padding: 5px 10px;
+    margin-bottom: 15px;
+}
+
+.preset-title-row .preset-name {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.preset-title-row button,
+.preset-title-row select {
+    margin: 0;
+    padding: 2px 4px;
+    font-size: initial;
+}
+.preset-title-row button {
+    margin: 0 0 0 20px;
+}
+
 
 .overview-preset:first-of-type h3 {
     /*margin-top: 0.25em;*/
