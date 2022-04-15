@@ -254,7 +254,7 @@ function getPresetName(data) {
 
 function getMessageTarget(data) {
     const i = data[0] === SYSEX_START ? IDX + 1 : IDX;
-    console.log(i, data?.[i] ?? '', hs(data));
+    // console.log(i, data?.[i] ?? '', hs(data));
     return data?.[i] ?? '';
 }
 
@@ -753,7 +753,7 @@ function getControlModeSysexMessages(presetIndex, controlId, mode, forceUpdate =
  */
 function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate = false, complete = false) {
 
-    console.log("getControlUpdateSysexMessages", presetIndex, controlId);
+    // console.log("getControlUpdateSysexMessages", presetIndex, controlId);
 
     // if (!data[TARGET_PRESET][presetIndex]) return [];
     // if (!data[TARGET_PRESET][presetIndex][CONTROLS_DATA]) return [];
@@ -780,7 +780,7 @@ function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate
 
 function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false, complete = false) {
 
-    console.log("getMidiSettingsSysexMessages", presetIndex, settings);
+    // console.log("getMidiSettingsSysexMessages", presetIndex, settings);
 
     if (!settings) return [];
 
@@ -793,7 +793,7 @@ function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false
         let setting = settings[i];
         if (!setting.changed && !forceUpdate) continue;
 
-        console.log("getMidiSettingsSysexMessages", i, (i-1)*6 + 1, presetIndex, parseInt(presetIndex, 10));
+        // console.log("getMidiSettingsSysexMessages", i, (i-1)*6 + 1, presetIndex, parseInt(presetIndex, 10));
 
         let msg = [];
         msg.push(

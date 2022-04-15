@@ -11,7 +11,7 @@ export const PresetNameEditor = observer(() => {
 
     const presetIndex = stores.state.currentPresetIndex;
 
-    console.log("PresetNameEditor render", presetIndex, stores.state.data[TARGET_PRESET][presetIndex]);
+    // console.log("PresetNameEditor render", presetIndex, stores.state.data[TARGET_PRESET][presetIndex]);
 
     const name= stores.state.data[TARGET_PRESET][presetIndex]["name"];
 

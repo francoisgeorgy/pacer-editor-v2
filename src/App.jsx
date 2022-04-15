@@ -104,8 +104,9 @@ export const App = observer((props) => {
                             </Switch>
                         </div>
 
-                        <UpdateMessages />
+                        {/*<UpdateMessages />*/}
 
+{/*
                         <div className="row">
                             <div>1.13:
                             {stores.state.data &&
@@ -162,6 +163,7 @@ export const App = observer((props) => {
                             }
                             </div>
                         </div>
+*/}
 {/*
                         <div className="mt-20">{
                             Object.getOwnPropertyNames(stores.state.updateMessages).map(

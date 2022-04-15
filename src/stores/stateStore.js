@@ -7,9 +7,9 @@ import {
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
-    parseSysexDump, MIDI_DATA, STEPS_DATA, getPresetConfigSysex
+    parseSysexDump, MIDI_DATA, STEPS_DATA, getPresetConfigSysex, getFullNonGlobalConfigSysex
 } from "../pacer/sysex";
-import {MAX_FILE_SIZE} from "../utils/misc";
+import {MAX_FILE_SIZE, wait} from "../utils/misc";
 import {hs} from "../utils/hexstring";
 import {presetIndexToXY} from "../pacer/utils";
 import {stores} from "./index";
@@ -233,7 +233,11 @@ export class StateStore {
             // console.log("StateStore.onBusy %", progress, show);
         }
 
+
         if (show) {
+
+            console.log("onBusy", show);
+
             if (this.busy !== busy) this.busy = busy;
             if (busyMessage !== null) this.busyMessage = busyMessage;
             if (bytesExpected > 0 && bytesExpected !== this.bytesExpected) this.bytesExpected = bytesExpected;
@@ -502,12 +506,12 @@ export class StateStore {
                     data: [0, 0, 0]
                 };
             }
-            console.log(JSON.stringify(this.data[TARGET_PRESET][presetId][MIDI_DATA]));
+            // console.log(JSON.stringify(this.data[TARGET_PRESET][presetId][MIDI_DATA]));
             // if (!this.updateMessages[presetId].hasOwnProperty(MIDI_DATA))
                 this.updateMessages[presetId][MIDI_DATA] = {
                     "dummy": getMidiSettingUpdateSysexMessages(presetId, this.data)
                 };
-            console.log("MIDI_DATA", JSON.stringify(this.updateMessages[presetId][MIDI_DATA]));
+            // console.log("MIDI_DATA", JSON.stringify(this.updateMessages[presetId][MIDI_DATA]));
             // this.updateMessages[presetId][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(presetId, this.data);
 
             // this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetId, controlId, this.data));
@@ -743,9 +747,11 @@ export class StateStore {
         // this.props.stores.state.data = data;
     }
 
-    updatePacer() {
+    async updatePacer() {
 
         this.showBusy({busy: true, busyMessage: "write Preset..."});
+
+        const messages = [];
 
         Object.getOwnPropertyNames(this.updateMessages).forEach(
             presetId => {
@@ -756,7 +762,8 @@ export class StateStore {
                                 this.updateMessages[presetId][ctrlType][ctrl].forEach(
                                     msg => {
                                         // console.warn(presetId, ctrlType, ctrl);
-                                        this.stores.midi.sendSysex(msg);
+                                        // await this.stores.midi.sendSysex(msg);
+                                        messages.push(this.stores.midi.sysex(msg));
                                     }
                                 );
                             }
@@ -766,14 +773,24 @@ export class StateStore {
             }
         );
 
-        setTimeout(
-            () => {
+        await stores.midi.sendToPacer(messages)
+            .then(() => wait(200))
+            .then(() => {
+                console.log("send done");
                 this.setChanged(false);
                 this.clearUpdateMessages();
                 this.stores.midi.readPreset(this.currentPresetIndex);
-            },
-            1000
-        );
+            });
+            // .then(r => () => console.log("done sending sysex"));
+
+        // setTimeout(
+        //     () => {
+        //         this.setChanged(false);
+        //         this.clearUpdateMessages();
+        //         this.stores.midi.readPreset(this.currentPresetIndex);
+        //     },
+        //     1000
+        // );
     }
 
 } // class StateStore

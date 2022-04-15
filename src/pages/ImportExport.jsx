@@ -22,7 +22,7 @@ export const ImportExport = observer(() => {
     }
 
     function sendToPacer() {
-        stores.midi.sendToPacer().then(r => () => console.log("done sending sysex"));
+        stores.midi.sendToPacer(getFullNonGlobalConfigSysex(this.stores.state.data, true, true)).then(r => () => console.log("done sending sysex"));
     }
 
     const data = stores.state.data;

@@ -330,9 +330,9 @@ export class MidiStore {
     sysex(data /*number[]*/) /*Uint8Array*/ {
         //TODO: clamp the numbers to 0..255
 
-        for(let i=0; i<data.length; i++) {
-            if (data[i] > 127) console.error("sysex", i, data[i], data);
-        }
+        // for(let i=0; i<data.length; i++) {
+        //     if (data[i] > 127) console.error("sysex", i, data[i], data);
+        // }
 
         return new Uint8Array([
             SYSEX_START,
@@ -344,18 +344,18 @@ export class MidiStore {
 
     //=============================================================================================
 
-    send(messages, outputId) {
-        console.log("midiStore.send", hs(messages));
+    async send(messages, outputId) {
+        // console.log("midiStore.send", hs(messages));
         // if (!this.outputInUse) return;
         this.outputById(outputId ?? this.outputInUse)?.send(messages);
+        await wait(100);
     }
 
-    sendSysex = (msg, sendForReal = true) => {
+    sendSysex = async (msg, sendForReal = true) => {
 
-
-        for(let i=0; i<msg.length; i++) {
-            if (msg[i] > 127) console.error("sendSysex", i, msg[i], msg);
-        }
+        // for(let i=0; i<msg.length; i++) {
+        //     if (msg[i] > 127) console.error("sendSysex", i, msg[i], msg);
+        // }
 
         if (!this.outputInUse) {
             console.warn("no output enabled to send the message");
@@ -367,10 +367,10 @@ export class MidiStore {
             return;
         }
 
-        console.log("sendSysex", msg, this.sysex(msg));
+        // console.log("sendSysex", msg, this.sysex(msg));
 
         if (sendForReal) {
-            this.send(this.sysex(msg));
+            await this.send(this.sysex(msg));
         }
     };
 
@@ -384,6 +384,7 @@ export class MidiStore {
     };
 
     readPreset(index) {
+        console.log("readPreset", index);
         // if (midiConnected(this.stores.state.output) && isVal(index)) {
         if (this.deviceConnected) {
             this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
@@ -411,6 +412,7 @@ export class MidiStore {
     }
 
     setSendProgress(msg) {
+        // console.log("update progress", msg);
         this.sendProgress = msg;
     }
 
@@ -418,7 +420,7 @@ export class MidiStore {
      * Send the current data saved in stores.state.bytes
      * @param patch
      */
-    sendToPacer = async () => {
+    sendToPacer = async (messages) => {
 
         console.log("sendToPacer");
 
@@ -430,7 +432,7 @@ export class MidiStore {
         this.sendProgress = 'building sysex messages...';
         await wait(20); // to force an update to of the UI to display the above message
 
-        const messages = getFullNonGlobalConfigSysex(this.stores.state.data, true, true)
+        // const messages = getFullNonGlobalConfigSysex(this.stores.state.data, true, true)
 
         let i = 0;
         let t = messages.length;
@@ -441,8 +443,11 @@ export class MidiStore {
             i++;
             // this.setSendProgress(`sending message ${i} of ${t} (${Math.round(i*100/t)}%)`);
             this.setSendProgress(`sending... ${Math.round(i*100/t)}% (${presetIndexToXY(getMessageTarget(message))})`);
-            this.send(message);
-            await wait(5);
+            console.log("sending", i);
+            await this.send(message);
+            // console.log("wait 100");
+            // await wait(10);
+            // console.log("wait done");
         }
 
         setTimeout(() => this.setSendProgress(null), 1000);
