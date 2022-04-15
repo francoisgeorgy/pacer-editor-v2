@@ -67,18 +67,18 @@ export const PRESET_TARGET = [
 ]
 
 export const CONTROL_NAME = 0x01;
-export const CONTROL_STOMPSWITCH_1 = 0x0D;
+export const CONTROL_STOMPSWITCH_1 = 0x0D;  // 13
 export const CONTROL_STOMPSWITCH_2 = 0x0E;
 export const CONTROL_STOMPSWITCH_3 = 0x0F;
 export const CONTROL_STOMPSWITCH_4 = 0x10;
 export const CONTROL_STOMPSWITCH_5 = 0x11;
 export const CONTROL_STOMPSWITCH_6 = 0x12;
 export const CONTROL_RESERVED = 0x13;
-export const CONTROL_STOMPSWITCH_A = 0x14;
+export const CONTROL_STOMPSWITCH_A = 0x14;  // 20
 export const CONTROL_STOMPSWITCH_B = 0x15;
 export const CONTROL_STOMPSWITCH_C = 0x16;
 export const CONTROL_STOMPSWITCH_D = 0x17;
-export const CONTROL_FOOTSWITCH_1 = 0x18;
+export const CONTROL_FOOTSWITCH_1 = 0x18;   // 24
 export const CONTROL_FOOTSWITCH_2 = 0x19;
 export const CONTROL_FOOTSWITCH_3 = 0x1A;
 export const CONTROL_FOOTSWITCH_4 = 0x1B;

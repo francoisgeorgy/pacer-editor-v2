@@ -7,7 +7,7 @@ import {
     getControlUpdateSysexMessages,
     getMidiSettingUpdateSysexMessages,
     isSysexData,
-    parseSysexDump, MIDI_DATA, STEPS_DATA
+    parseSysexDump, MIDI_DATA, STEPS_DATA, getPresetConfigSysex
 } from "../pacer/sysex";
 import {MAX_FILE_SIZE} from "../utils/misc";
 import {hs} from "../utils/hexstring";
@@ -328,11 +328,12 @@ export class StateStore {
         this.data[TARGET_PRESET][presetIndex]["name"] = name;
         this.data[TARGET_PRESET][presetIndex]["changed"] = true;     //TODO: used?
 
-
         if (!this.updateMessages.hasOwnProperty(presetIndex)) this.updateMessages[presetIndex] = {};
         if (!this.updateMessages[presetIndex].hasOwnProperty("name")) this.updateMessages[presetIndex]["name"] = {};
 
         this.updateMessages[presetIndex]["name"]["dummy"] = getPresetNameSysexMessages(presetIndex, this.data);
+
+        // console.log("name", presetIndex, JSON.stringify(this.data[TARGET_PRESET][presetIndex]["name"]));
 
         this.changed = true;
     }
@@ -475,10 +476,11 @@ export class StateStore {
             if (!this.updateMessages[presetId].hasOwnProperty("name")) this.updateMessages[presetId]["name"] = {};
             this.updateMessages[presetId]["name"]["dummy"] = getPresetNameSysexMessages(presetId, this.data);
 
-            Object.values(this.data[TARGET_PRESET][presetId][CONTROLS_DATA])
-                .forEach(control => {
-                    control['control_mode'] = 0;
-                    Object.values(control[STEPS_DATA])
+            Object.keys(this.data[TARGET_PRESET][presetId][CONTROLS_DATA])
+                .forEach(controlId => {
+                    // console.log("clearPreset", presetId, controlId);
+                    this.data[TARGET_PRESET][presetId][CONTROLS_DATA][controlId]['control_mode'] = 0;
+                    Object.values(this.data[TARGET_PRESET][presetId][CONTROLS_DATA][controlId][STEPS_DATA])
                         .forEach(step => {
                             step["channel"] = 0;
                             step["msg_type"] = MSG_CTRL_OFF;
@@ -489,19 +491,24 @@ export class StateStore {
                             step["led_inactive_color"] = 0;
                             step["led_num"] = 0;
                         });
-                    this.addControlUpdateMessage(control, getControlUpdateSysexMessages(presetId, control, this.data));
+                    this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetId, controlId, this.data, true));
                 });
 
             this.data[TARGET_PRESET][presetId][MIDI_DATA] = {};
-            for (let k=0; k<16; k++) {
+            for (let k=1; k<=16; k++) { // MUST start at 1
                 this.data[TARGET_PRESET][presetId][MIDI_DATA][k] = {
                     channel: 0,
                     msg_type: MSG_CTRL_OFF,
                     data: [0, 0, 0]
                 };
             }
-            if (!this.updateMessages[presetId].hasOwnProperty(MIDI_DATA)) this.updateMessages[presetId][MIDI_DATA] = {};
-            this.updateMessages[presetId][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(presetId, this.data);
+            console.log(JSON.stringify(this.data[TARGET_PRESET][presetId][MIDI_DATA]));
+            // if (!this.updateMessages[presetId].hasOwnProperty(MIDI_DATA))
+                this.updateMessages[presetId][MIDI_DATA] = {
+                    "dummy": getMidiSettingUpdateSysexMessages(presetId, this.data)
+                };
+            console.log("MIDI_DATA", JSON.stringify(this.updateMessages[presetId][MIDI_DATA]));
+            // this.updateMessages[presetId][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(presetId, this.data);
 
             // this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetId, controlId, this.data));
 
@@ -520,13 +527,20 @@ export class StateStore {
 
         if (presetIdFrom < 0 || presetIdTo < 0) return false;
 
-        console.log(`copy preset ${presetIdFrom} to ${presetIdTo}`);
-        console.log(JSON.stringify(this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA]));
-
         if (this.data && this.data[TARGET_PRESET][presetIdFrom]) {
 
-            if (!this.updateMessages.hasOwnProperty(presetIdTo)) this.updateMessages[presetIdTo] = {};
-            if (!this.data[TARGET_PRESET][presetIdTo]) this.data[TARGET_PRESET][presetIdTo] = {};
+            const presetFrom = this.data[TARGET_PRESET][presetIdFrom];
+            this.data[TARGET_PRESET][presetIdTo] = {[CONTROLS_DATA]: {}, [MIDI_DATA]: {}};
+            const presetTo = this.data[TARGET_PRESET][presetIdTo];
+
+            console.log(`copy preset ${presetIdFrom} to ${presetIdTo}`);
+            // console.log(JSON.stringify(this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA]));
+
+            // this.clearPreset(presetIdTo);
+
+            // if (!this.updateMessages.hasOwnProperty(presetIdTo))
+            // this.updateMessages[presetIdTo] = {[CONTROLS_DATA]: {}, [MIDI_DATA]: {}};
+            // if (!this.data[TARGET_PRESET][presetIdTo]) this.data[TARGET_PRESET][presetIdTo] = {};
 
             // Name:
 
@@ -534,18 +548,26 @@ export class StateStore {
 
             // Controls:
 
-            this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA] = JSON.parse(JSON.stringify(this.data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA]));
+            // this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA] = null;
 
-            ALL_CONTROLS.forEach(controlId => {
-                this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetIdTo, control, this.data));
-            });
+            // this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA] = JSON.parse(JSON.stringify(this.data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA]));
+            presetTo[CONTROLS_DATA] = JSON.parse(JSON.stringify(presetFrom[CONTROLS_DATA]));
+            presetTo[MIDI_DATA] = JSON.parse(JSON.stringify(presetFrom[MIDI_DATA]));
+
+            // console.log("presetFrom", JSON.stringify(presetFrom));
+            console.log("presetTo", JSON.stringify(presetTo, null, 4));
+
+            // ALL_CONTROLS.forEach(controlId => {
+            //     this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetIdTo, controlId, this.data, true, false));
+            // });
 
             // Preset MIDI:
 
-            this.data[TARGET_PRESET][presetIdTo][MIDI_DATA] = JSON.parse(JSON.stringify(this.data[TARGET_PRESET][presetIdFrom][MIDI_DATA]));
+            // this.data[TARGET_PRESET][presetIdTo][MIDI_DATA] = JSON.parse(JSON.stringify(this.data[TARGET_PRESET][presetIdFrom][MIDI_DATA]));
 
-            if (!this.updateMessages[presetIdTo].hasOwnProperty(MIDI_DATA)) this.updateMessages[presetIdTo][MIDI_DATA] = {};
-            this.updateMessages[presetIdTo][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(presetIdTo, this.data);
+            // if (!this.updateMessages[presetIdTo].hasOwnProperty(MIDI_DATA))
+            // this.updateMessages[presetIdTo][MIDI_DATA] = {};
+            // this.updateMessages[presetIdTo][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(presetIdTo, this.data);
 
             // CONTROLS_WITH_SEQUENCE.forEach(controlId => {
             //     // data[TARGET_PRESET][presetIdTo][CONTROLS_DATA][controlId] = Object.assign({}, data[TARGET_PRESET][presetIdFrom][CONTROLS_DATA][controlId]);
@@ -574,6 +596,18 @@ export class StateStore {
 
             this.data[TARGET_PRESET][presetIdTo]["changed"] = true;
             this.changed = true;
+
+            // console.log("presetFrom", JSON.stringify(getPresetConfigSysex(presetIdFrom, this.data)));
+            // console.log("presetTo", JSON.stringify(getPresetConfigSysex(presetIdTo, this.data)));
+
+            // this.stores.state.deepMergeData(parseSysexDump(message.data));
+
+            this.updateMessages[presetIdTo] = {
+                "all": {
+                    "all": getPresetConfigSysex(presetIdTo, this.data)
+                }
+            };
+
         }
         /*
                 const { data, updateMessages } = this.state;
@@ -721,6 +755,7 @@ export class StateStore {
                             ctrl => {
                                 this.updateMessages[presetId][ctrlType][ctrl].forEach(
                                     msg => {
+                                        // console.warn(presetId, ctrlType, ctrl);
                                         this.stores.midi.sendSysex(msg);
                                     }
                                 );

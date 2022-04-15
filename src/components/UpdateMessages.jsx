@@ -49,9 +49,12 @@ export const UpdateMessages = observer(() => {
                             return Object.getOwnPropertyNames(stores.state.updateMessages[presetId]).map(     // control type
                                 (ctrlType, j) => {
                                     return Object.getOwnPropertyNames(stores.state.updateMessages[presetId][ctrlType]).map(      // control
-                                        (ctrl, k) => {
-                                            return updateMessage(presetId, ctrlType, ctrl, stores.state.updateMessages[presetId][ctrlType][ctrl])
-                                        }
+                                        (ctrl, k) => (
+                                            <div>
+                                                <div>{updateMessage(presetId, ctrlType, ctrl, stores.state.updateMessages[presetId][ctrlType][ctrl])}</div>
+                                                {/*<pre>{JSON.stringify(stores.state.updateMessages[presetId][ctrlType][ctrl])}</pre>*/}
+                                            </div>
+                                        )
                                     );
                                 }
                             );

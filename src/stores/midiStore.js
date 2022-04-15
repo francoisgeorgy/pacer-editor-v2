@@ -329,6 +329,11 @@ export class MidiStore {
 
     sysex(data /*number[]*/) /*Uint8Array*/ {
         //TODO: clamp the numbers to 0..255
+
+        for(let i=0; i<data.length; i++) {
+            if (data[i] > 127) console.error("sysex", i, data[i], data);
+        }
+
         return new Uint8Array([
             SYSEX_START,
             ...SYSEX_SIGNATURE,
@@ -346,6 +351,12 @@ export class MidiStore {
     }
 
     sendSysex = (msg, sendForReal = true) => {
+
+
+        for(let i=0; i<msg.length; i++) {
+            if (msg[i] > 127) console.error("sendSysex", i, msg[i], msg);
+        }
+
         if (!this.outputInUse) {
             console.warn("no output enabled to send the message");
             return;
@@ -355,6 +366,9 @@ export class MidiStore {
             console.warn(`send: output ${this.outputInUse} not found`);
             return;
         }
+
+        console.log("sendSysex", msg, this.sysex(msg));
+
         if (sendForReal) {
             this.send(this.sysex(msg));
         }

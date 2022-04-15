@@ -5,7 +5,7 @@ import {
     COMMAND_SET,
     CONTROL_ALL,
     CONTROL_EXPRESSION_PEDAL_1,
-    CONTROL_EXPRESSION_PEDAL_2,
+    CONTROL_EXPRESSION_PEDAL_2, CONTROL_FOOTSWITCH_1,
     CONTROL_FOOTSWITCH_4,
     CONTROL_MIDI,
     CONTROL_MODE_ELEMENT,
@@ -623,6 +623,10 @@ export function requestPresetObj(presetIndex, controlId) {
 
 function buildSysexMessage(data, complete=false) {
 
+    for(let i=0; i<data.length; i++) {
+        if (data[i] > 127) console.error("invalid data", i, data[i], data);
+    }
+
     let msg = [];
     if (complete) {
         msg.push(SYSEX_START, ...SYSEX_SIGNATURE);
@@ -673,7 +677,7 @@ function getControlStepSysexMessages(presetIndex, controlId, steps, forceUpdate 
         msg.push((i-1)*6 + 3, 1, step.data[0] ?? 0, 0x00);
         msg.push((i-1)*6 + 4, 1, step.data[1] ?? 0, 0x00);
         msg.push((i-1)*6 + 5, 1, step.data[2] ?? 0, 0x00);
-        msg.push((i-1)*6 + 6, 1, step.active ?? 0);
+        msg.push((i-1)*6 + 6, 1, step.active ? 1 : 0);
 
         msgs.push(buildSysexMessage(msg, complete));
     }
@@ -749,6 +753,8 @@ function getControlModeSysexMessages(presetIndex, controlId, mode, forceUpdate =
  */
 function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate = false, complete = false) {
 
+    console.log("getControlUpdateSysexMessages", presetIndex, controlId);
+
     // if (!data[TARGET_PRESET][presetIndex]) return [];
     // if (!data[TARGET_PRESET][presetIndex][CONTROLS_DATA]) return [];
     // if (!data[TARGET_PRESET][presetIndex][CONTROLS_DATA][controlId]) return [];
@@ -774,6 +780,8 @@ function getControlUpdateSysexMessages(presetIndex, controlId, data, forceUpdate
 
 function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false, complete = false) {
 
+    console.log("getMidiSettingsSysexMessages", presetIndex, settings);
+
     if (!settings) return [];
 
     let msgs = [];
@@ -784,6 +792,8 @@ function getMidiSettingsSysexMessages(presetIndex, settings, forceUpdate = false
 
         let setting = settings[i];
         if (!setting.changed && !forceUpdate) continue;
+
+        console.log("getMidiSettingsSysexMessages", i, (i-1)*6 + 1, presetIndex, parseInt(presetIndex, 10));
 
         let msg = [];
         msg.push(
@@ -821,7 +831,7 @@ function getPresetNameSysexMessages(presetIndex, data, complete=false) {
     if (s) {
         msgData.push(s.length);
         for (let i=0; i < s.length; i++) {
-            msgData.push(s.charCodeAt(i));
+            msgData.push(Math.min(s.charCodeAt(i), 127));
         }
     } else {
         msgData.push(0);
@@ -849,6 +859,31 @@ export function getFullNonGlobalConfigSysex(data, filter = true, fullSysex = fal
             msgs.push(...getMidiSettingUpdateSysexMessages(presetIndex, data, fullSysex));
         });
     // console.log("getFullNonGlobalConfigSysex", msgs);
+    return msgs;
+}
+
+export function getPresetConfigSysex(presetIndex, data, fullSysex = false) {
+    if (!data) return []
+    const msgs = [];
+    // Object.keys(data[TARGET_PRESET])
+    //     .forEach(presetIndex => {
+
+    // FOOTSWITCHES.forEach(controlId =>
+    //     console.log("getPresetConfigSysex FOOTSWITCHES", controlId, JSON.stringify(getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)))
+    // );
+    // console.log("getPresetConfigSysex CONTROL_FOOTSWITCH_1", JSON.stringify(getControlUpdateSysexMessages(presetIndex, CONTROL_FOOTSWITCH_1, data, true, fullSysex)))
+    // msgs.push(...getControlUpdateSysexMessages(presetIndex, CONTROL_FOOTSWITCH_1, data, true, fullSysex));
+
+
+            msgs.push(...getPresetNameSysexMessages(presetIndex, data, fullSysex));
+    FOOTSWITCHES.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+    EXPPEDALS.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+    STOMPSWITCHES_BOTTOM.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+    STOMPSWITCHES_TOP.forEach(controlId => msgs.push(...getControlUpdateSysexMessages(presetIndex, controlId, data, true, fullSysex)));
+            msgs.push(...getMidiSettingUpdateSysexMessages(presetIndex, data, fullSysex));
+
+        // });
+    // console.log("getPresetConfigSysex", JSON.stringify(msgs));
     return msgs;
 }
 

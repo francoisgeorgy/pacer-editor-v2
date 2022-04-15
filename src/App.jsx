@@ -13,6 +13,11 @@ import {MidiSupportWarning} from "./midi/MidiSupportWarning";
 import {MidiPortsSelect} from "./midi/MidiPortsSelect";
 import * as QueryString from "query-string";
 import './App.css';
+import {UpdateMessages} from "./components/UpdateMessages";
+import UpdateMessagesBytes from "./components/UpdateMessagesBytes";
+import {stores} from "./stores";
+import {TARGET_PRESET} from "./pacer/constants";
+import {CONTROLS_DATA} from "./pacer/sysex";
 
 const MenuLink = ({ label, to, activeOnlyWhenExact }) => (
     <Route
@@ -98,6 +103,78 @@ export const App = observer((props) => {
                                 <Route component={NoMatch} />
                             </Switch>
                         </div>
+
+                        <UpdateMessages />
+
+                        <div className="row">
+                            <div>1.13:
+                            {stores.state.data &&
+                                stores.state.data[TARGET_PRESET] &&
+                                stores.state.data[TARGET_PRESET]["1"] &&
+                                stores.state.data[TARGET_PRESET]["1"][CONTROLS_DATA] &&
+                                stores.state.data[TARGET_PRESET]["1"][CONTROLS_DATA]["13"] &&
+                                <pre>{JSON.stringify(stores.state.data[TARGET_PRESET]["1"][CONTROLS_DATA]["13"], null, 4)}</pre>
+                            }
+                            </div>
+                            <div>1.24:
+                            {stores.state.data &&
+                                stores.state.data[TARGET_PRESET] &&
+                                stores.state.data[TARGET_PRESET]["1"] &&
+                                stores.state.data[TARGET_PRESET]["1"][CONTROLS_DATA] &&
+                                stores.state.data[TARGET_PRESET]["1"][CONTROLS_DATA]["24"] &&
+                                <pre>{JSON.stringify(stores.state.data[TARGET_PRESET]["1"][CONTROLS_DATA]["24"], null, 4)}</pre>
+                            }
+                            </div>
+                            <div>7.13:
+                            {stores.state.data &&
+                                stores.state.data[TARGET_PRESET] &&
+                                stores.state.data[TARGET_PRESET]["7"] &&
+                                stores.state.data[TARGET_PRESET]["7"][CONTROLS_DATA] &&
+                                stores.state.data[TARGET_PRESET]["7"][CONTROLS_DATA]["13"] &&
+                                <pre>{JSON.stringify(stores.state.data[TARGET_PRESET]["7"][CONTROLS_DATA]["13"], null, 4)}</pre>
+                            }
+                            </div>
+                            <div>7.24:
+                            {stores.state.data &&
+                                stores.state.data[TARGET_PRESET] &&
+                                stores.state.data[TARGET_PRESET]["7"] &&
+                                stores.state.data[TARGET_PRESET]["7"][CONTROLS_DATA] &&
+                                stores.state.data[TARGET_PRESET]["7"][CONTROLS_DATA]["24"] &&
+                                <pre>{JSON.stringify(stores.state.data[TARGET_PRESET]["7"][CONTROLS_DATA]["24"], null, 4)}</pre>
+                            }
+                            </div>
+                            <div>13.24:
+                            {stores.state.data &&
+                                stores.state.data[TARGET_PRESET] &&
+                                stores.state.data[TARGET_PRESET]["13"] &&
+                                stores.state.data[TARGET_PRESET]["13"][CONTROLS_DATA] &&
+                                stores.state.data[TARGET_PRESET]["13"][CONTROLS_DATA]["24"] &&
+                                <pre>{JSON.stringify(stores.state.data[TARGET_PRESET]["13"][CONTROLS_DATA]["24"], null, 4)}</pre>
+                            }
+                            </div>
+                            <div>19.24:
+                            {stores.state.data &&
+                                stores.state.data[TARGET_PRESET] &&
+                                stores.state.data[TARGET_PRESET]["19"] &&
+                                stores.state.data[TARGET_PRESET]["19"][CONTROLS_DATA] &&
+                                stores.state.data[TARGET_PRESET]["19"][CONTROLS_DATA]["24"] &&
+                                <pre>{JSON.stringify(stores.state.data[TARGET_PRESET]["19"][CONTROLS_DATA]["24"], null, 4)}</pre>
+                            }
+                            </div>
+                        </div>
+{/*
+                        <div className="mt-20">{
+                            Object.getOwnPropertyNames(stores.state.updateMessages).map(
+                                p => <div key={p}>
+                                    {p}:{Object.getOwnPropertyNames(stores.state.updateMessages[p]).map(
+                                        pp => <div key={`${p}.${pp}`}>
+                                            {p}.{pp}: <pre>{JSON.stringify(stores.state.updateMessages[p][pp])}</pre>
+                                            </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+*/}
 
                         <Footer />
                     </div>
