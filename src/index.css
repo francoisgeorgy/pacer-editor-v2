@@ -125,6 +125,10 @@ button:focus {
     border-bottom: 1px solid #777;
 }
 
+.center {
+    text-align: center;
+}
+
 .mt-5 {
     margin-top: 5px;
 }
@@ -157,6 +161,10 @@ button:focus {
     margin-right: 15px;
 }
 
+.ml-5 {
+    margin-left: 5px;
+}
+
 .ml-10 {
     margin-left: 10px;
 }
@@ -169,8 +177,16 @@ button:focus {
     margin-left: 30px;
 }
 
+.ml-50 {
+    margin-left: 50px;
+}
+
 .ml-100 {
     margin-left: 100px;
+}
+
+.ml-150 {
+    margin-left: 150px;
 }
 
 .mr-5 {

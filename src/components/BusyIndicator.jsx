@@ -8,7 +8,7 @@ export const BusyIndicator = observer(({msg, className}) => {
     return busy ?
         <div className={className || 'busy'}>
             {msg ? msg : busyMessage}
-            {progress >= 0 && <span> {progress}%</span>}
+            {progress >= 0 && <div className="center">{progress}%</div>}
         </div>
         : null;
 

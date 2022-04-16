@@ -5,6 +5,7 @@ import {getFullNonGlobalConfigSysex} from "../pacer/sysex";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import {DownloadBin} from "../components/DownloadBin";
 import "./ImportExport.css";
+import {Tabs} from "../components/Tabs";
 
 export const ImportExport = observer(() => {
 
@@ -30,9 +31,11 @@ export const ImportExport = observer(() => {
     return (
         <div className="content import-export">
 
+            <Tabs />
+
             <PresetSelectorAndButtons showClearButton={true} overview={true}
                                       title="Import/Export presets"
-                                      subtitle="Select the presets to export or send:" />
+                                      subtitle="Select the presets to export or send." />
 
             <div className="content-row-content first dump-wrapper">
 

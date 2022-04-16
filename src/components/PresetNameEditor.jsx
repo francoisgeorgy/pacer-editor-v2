@@ -16,10 +16,9 @@ export const PresetNameEditor = observer(() => {
     const name= stores.state.data[TARGET_PRESET][presetIndex]["name"];
 
     return (
-        <div className="preset-name-editor">
+        <div className="preset-name-editor row align-center">
             <div className="edit-section-title">Name:</div>
-            <input value={name} onChange={onNameUpdate} size={8} />
-            max 5 characters
+            <input value={name} onChange={onNameUpdate} size={8} className="ml-5 mr-5"/> max 5 characters
         </div>
     );
 

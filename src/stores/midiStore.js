@@ -330,7 +330,7 @@ export class MidiStore {
 
     //=============================================================================================
 
-    readPacer = (msg, max, busyMessage = "Please wait...") => {
+    readPacer = (msg, max, busyMessage = "Reading preset...") => {
         this.bytesReceived = 0;
         this.stores.state.showBusy({busy: true, busyMessage: busyMessage, progressCurrent: 0, max});
         // this.saveBytes = false;
@@ -350,7 +350,7 @@ export class MidiStore {
      * Request a full dump and save the data in stores.state.bytes
      * @param busyMessage
      */
-    readFullDump = (busyMessage = "Please wait...") => {
+    readFullDump = (busyMessage = "Reading all presets...") => {
         this.bytesReceived = 0;
         this.stores.state.showBusy({busy: true, busyMessage: busyMessage, progressCurrent: 0, max: FULL_DUMP_EXPECTED_BYTES});
         // this.stores.state.clearBytes();

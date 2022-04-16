@@ -13,9 +13,9 @@ export const Overview = observer(() => {
 
             <Tabs />
 
-            <div className="mb-20">
+            <div className="Xmb-20">
                 <PresetSelectorAndButtons showClearButton={true} overview={true}
-                    title="Presets Overview" subtitle="Select the presets to view or select none to view all presets:" />
+                    title="Presets Overview" subtitle="Select the presets to view or select none to view all presets." />
             </div>
             <div className="content-row-content">
                 <PresetsOverview data={stores.state.data}

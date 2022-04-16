@@ -7,6 +7,7 @@ import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import {presetIndexToXY} from "../pacer/utils";
 import "./Preset.css";
 import {CONTROLS_DATA, MIDI_DATA} from "../pacer/sysex";
+import {Tabs} from "../components/Tabs";
 
 export const PresetMidi = observer(() => {
 
@@ -24,7 +25,9 @@ export const PresetMidi = observer(() => {
     return (
         <div className="content">
 
-            <PresetSelectorAndButtons showClearButton={false} title="Preset recall MIDI Configuration" subtitle="Select the preset to configure:" />
+            <Tabs />
+
+            <PresetSelectorAndButtons showClearButton={false} title="Preset recall MIDI Configuration" subtitle="Select the preset to configure." />
 
             {showEditor &&
             <div className="content-row-content">

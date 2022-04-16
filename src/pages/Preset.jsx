@@ -14,6 +14,7 @@ import {presetIndexToXY} from "../pacer/utils";
 import {PresetOverview} from "../components/PresetsOverview";
 import ReactSwitch from "../components/switch";
 import "./Preset.css";
+import {Tabs} from "../components/Tabs";
 // var clone = require('clone');
 
 //FIXME: fix this:
@@ -53,16 +54,20 @@ export const Preset = observer(() => {
     return (
 
         <div className="content preset-editor">
-            <PresetSelectorAndButtons showClearButton={false} title="Presets configuration" subtitle="Select the preset to configure:" />
+
+            <Tabs />
+
+            <PresetSelectorAndButtons showClearButton={false} title="Presets configuration" subtitle="Select the preset to configure." />
             {data?.[TARGET_PRESET]?.[presetIndex] &&
             <div className="content-row-content">
                 <div className="preset-title-row">
                     <div className="preset-name">
                         {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold">{data[TARGET_PRESET][presetIndex]["name"]}</span>
                     </div>
-                    <div>
+                    <div className="row align-center">
                         <button onClick={() => stores.state.clearPreset(presetIndex)}>Clear</button>
-                        <button className="ml-20" onClick={() => doCopyPresetFrom(copyFrom, presetIndex)}>Copy from:</button> <select onChange={e => setCopyFrom(parseInt(e.target.value))}>
+                        <button className="ml-20" onClick={() => doCopyPresetFrom(copyFrom, presetIndex)}>Copy from:</button> <select
+                            onChange={e => setCopyFrom(parseInt(e.target.value))}>
                             <option value="-1">-</option>
                             {
                                 Array.from(Array(24).keys()).map(
@@ -80,7 +85,7 @@ export const Preset = observer(() => {
             </div>}
 
             {data && data[TARGET_PRESET]?.[presetIndex] &&
-            <div className="row align-center mt-20">
+            <div className="row align-center">
                 <div className="edit-section-title">Controls:</div>
                 <ReactSwitch onChange={(checked) => stores.state.setDetailView(checked)}
                              checked={stores.state.detailView}

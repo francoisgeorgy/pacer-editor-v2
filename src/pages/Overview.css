@@ -43,7 +43,7 @@ h3.preset-title {
 .preset-title-row button,
 .preset-title-row select {
     margin: 0;
-    padding: 2px 4px;
+    padding: 0 4px;
     font-size: initial;
 }
 .preset-title-row button {

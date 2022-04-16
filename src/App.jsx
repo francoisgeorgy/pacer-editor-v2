@@ -46,32 +46,35 @@ export const App = observer((props) => {
 
                 <MidiSupportWarning />
 
+{/*
                 <header className="header">
                     <MenuLink activeOnlyWhenExact={true} to="/" label="Overview" />
                     <MenuLink to="/preset"          label="Preset config" />
                     <MenuLink to="/presetmidi"      label="Preset MIDI" />
                     <MenuLink to="/patch"           label="Import/Export" />
-                    {/*{debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}*/}
-                    {/*{debug && <MenuLink to="/debug" label="Debug" />}*/}
+                    {debug && <MenuLink to="/dumpdecoder" label="Dump decoder" />}
+                    {debug && <MenuLink to="/debug" label="Debug" />}
                     <MenuLink to="/help"            label="Help" />
                     <div className="spacer"> </div>
                     <div className="header-app-name">
                         Pacer editor by <a href="https://studiocode.dev/" target="_blank" rel="noopener noreferrer">StudioCode.dev</a>
                     </div>
                 </header>
+*/}
 
                 <div className="subheader row align-center">
                     <MidiPortsSelect />
-                    <BusyIndicator />
+                    {/*<BusyIndicator />*/}
                     <div className="grow right-align text-large">
-                        <a className="external" href="https://studiocode.dev/midi-monitor/" target="midi_monitor">MIDI Monitor</a>
+                        <span className="bold">Pacer editor</span> by <a href="https://studiocode.dev/" target="_blank" rel="noopener noreferrer">StudioCode.dev</a>
+                        {/*<a className="external" href="https://studiocode.dev/midi-monitor/" target="midi_monitor">MIDI Monitor</a>*/}
                     </div>
                 </div>
 
                 <div className="subheader row align-center">
                     <MenuButtons />
-                    <div className="grow right-align text-large">
-                        <a className="external" href="https://studiocode.dev/resources/midi-cc/" target="midi_cc">MIDI CC cheat sheet</a>
+                    <div className="grow right-align text-sm">
+                        <a className="external" href="https://studiocode.dev/midi-monitor/" target="midi_monitor">MIDI Monitor</a> • <a className="external" href="https://studiocode.dev/resources/midi-cc/" target="midi_cc">MIDI CCs</a>
                     </div>
                 </div>
 
