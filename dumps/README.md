@@ -65,7 +65,6 @@ preset 5, SW2, set step 1 note to B3
 
     7F 01 01 05 0E 01 01 00 00 02 01 43 00 03 01 3B 00 04 01 7F 00 05 01 00 00 06 01 01 40 01 00 00 41 01 7F 00 42 01 7F 00 43 01 00 00 4A
     
-    
 ## Sysex format:
 
     <start>  <header>     <cmd> <tgt> <idx> <obj> <elm> <data>  <cs> <end>

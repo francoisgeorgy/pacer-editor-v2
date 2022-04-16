@@ -299,10 +299,10 @@ export class MidiStore {
     //=============================================================================================
 
     async send(messages, outputId) {
-        // console.log("midiStore.send", hs(messages));
+        console.log("midiStore.send", hs(messages));
         // if (!this.outputInUse) return;
         this.outputById(outputId ?? this.outputInUse)?.send(messages);
-        await wait(40);
+        await wait(50);
     }
 
     sendSysex = async (msg, sendForReal = true) => {

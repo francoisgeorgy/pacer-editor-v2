@@ -9,6 +9,7 @@ import * as Note from "tonal-note";
 import {observer} from "mobx-react-lite";
 import {stores} from "../stores";
 import "./MidiSettingsEditor.css";
+import {MIDI_DATA} from "../pacer/sysex";
 
 const MidiNote = ({ note, onChange }) => {
     return (
@@ -82,7 +83,7 @@ const Setting = observer(({ index, config  }) => {
 
 export const MidiSettingsEditor = observer(() => {
 
-        const settings = stores.state.data[TARGET_PRESET][stores.state.currentPresetIndex]["midi"]
+        const settings = stores.state.data[TARGET_PRESET][stores.state.currentPresetIndex][MIDI_DATA]
 
         return (
             <div className="settings">

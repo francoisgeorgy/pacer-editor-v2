@@ -429,6 +429,8 @@ export class StateStore {
 
         let v = parseInt(value, 10);
 
+        console.log("updateMidiSettings", settingIndex, dataType, dataIndex, value, v);
+
         const P = this.currentPresetIndex;
 
         if (dataType === "data") {
@@ -454,6 +456,10 @@ export class StateStore {
 
         //TODO: update the methods that read updateMessages to allow object or array
         this.updateMessages[P][MIDI_DATA]["dummy"] = getMidiSettingUpdateSysexMessages(P, this.data);
+
+
+        console.log("updateMidiSettings", JSON.stringify(this.updateMessages[P][MIDI_DATA]["dummy"]));
+
     }
 
     clearPreset(presetId) {
@@ -636,7 +642,7 @@ export class StateStore {
         this.showBusy({busy: true, busyMessage: "write Preset...", max: messages.length});
 
         await stores.midi.sendToPacer(messages)
-            .then(() => wait(200))
+            .then(() => wait(250))
             .then(() => {
                 this.setChanged(false);
                 this.clearUpdateMessages();

@@ -6,7 +6,7 @@ import {MidiSettingsEditor} from "../components/MidiSettingsEditor";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import {presetIndexToXY} from "../pacer/utils";
 import "./Preset.css";
-import {MIDI_DATA} from "../pacer/sysex";
+import {CONTROLS_DATA, MIDI_DATA} from "../pacer/sysex";
 
 export const PresetMidi = observer(() => {
 
@@ -44,6 +44,12 @@ export const PresetMidi = observer(() => {
                 {/*<h2>Send the updated config to the Pacer</h2>*/}
                 <button className="action-button update" onClick={() => stores.state.updatePacer()}>Update Pacer</button>
             </div>}
+
+{/*
+            <div>
+                <pre>{JSON.stringify(stores.state.data?.[TARGET_PRESET]?.[presetIndex]?.[MIDI_DATA], null, 4)}</pre>
+            </div>
+*/}
 
         </div>
     );
