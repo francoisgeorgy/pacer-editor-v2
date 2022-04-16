@@ -45,14 +45,6 @@ export const MidiPortsSelect = observer(() => {
 
     return (
         <div className={`midi-ports ${midi_ok?'midi-ok':'midi-ko'}`}>
-{/*
-            <pre>
-                {JSON.stringify(stores.midi.inputs, null, 4)}
-            </pre>
-            <pre>
-                {JSON.stringify(stores.midi.outputs, null, 4)}
-            </pre>
-*/}
             <div>
                 <span>MIDI input: </span>
                 <select onChange={handleInSelection} value={stores.midi.inputInUse} className={stores.midi.inputInUse ? '' : 'bg-warning'}>
@@ -67,22 +59,8 @@ export const MidiPortsSelect = observer(() => {
                     {Object.entries(stores.midi.outputs).map(([id, port]) => <option key={id} value={port.id}>{portLabel(port)}</option>)}
                 </select>
             </div>
-
             {/*<MidiFeedback />*/}
-
-            {/*
-        {Object.entries(stores.midi.outputs).map(([id, port]) => {
-            console.log(id, stores.midi.outputInUse(id));
-            return (
-                <div className="port-wrapper">
-                <div key={id} onClick={() => stores.midi.toggleOutput(id)} className={stores.midi.outputInUse(id) ? 'port active' : 'port'}>{port.name}</div>
-                </div>
-            );
-        })}
-*/}
         </div>
     );
-
-    //-------------------------------------------------------------------------
 
 });

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import {FOOTSWITCHES, STOMPSWITCHES_TOP, STOMPSWITCHES_BOTTOM, EXPPEDALS, CONTROLS} from "../pacer/constants";
 import {observer} from "mobx-react-lite";
 import {stores} from "../stores";

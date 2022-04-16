@@ -1,63 +1,18 @@
 import {action, computed, makeAutoObservable} from 'mobx';
 import {loadPreferences, savePreferences} from "../utils/preferences";
 import {
-    FULL_DUMP_EXPECTED_BYTES, getFullNonGlobalConfigSysex, getMessageTarget, isSysexData, parseSysexDump,
+    FULL_DUMP_EXPECTED_BYTES, getMessageTarget, isSysexData, parseSysexDump,
     requestAllPresets,
     requestPreset,
-    SINGLE_PRESET_EXPECTED_BYTES,
-    splitDump
+    SINGLE_PRESET_EXPECTED_BYTES
 } from "../pacer/sysex";
 import {wait} from "../utils/misc";
 import {SYSEX_SIGNATURE} from "../pacer/constants";
 import {hs} from "../utils/hexstring";
-import {stores} from "./index";
 import {presetIndexToXY} from "../pacer/utils";
 
 export const SYSEX_START = 0xF0;
 export const SYSEX_END = 0xF7;
-
-/*
-export const batchMessages = (callback, callbackBusy, wait) => {
-
-    console.log("batchMessages: init", wait);
-
-    let messages = [];  // batch of received messages
-    let timeout;
-    let totalBytesReceived = 0;
-
-    return function() {
-
-        let event = arguments[0];
-
-        //
-        // We ignore all messages that are NOT sysex messages:
-        //
-        if (event.data[0] !== SYSEX_START) {
-            console.log("non sysex message ignored");
-            return;
-        }
-
-        messages.push(event.data);
-
-        totalBytesReceived += event.data.length;
-
-        callbackBusy(totalBytesReceived);
-
-        if (timeout) return;
-
-        console.log("batchMessages: set timeout");
-        timeout = setTimeout(() => {
-            console.log("batchMessages: timeout elapsed");
-            timeout = null;
-            const m = messages.slice(); // clone
-            messages = [];
-            callback(m);    // we pass a clone because we may receive new messages during the callback processing
-        }, wait);
-
-    };
-};
-*/
-
 
 export class MidiStore {
 
@@ -72,7 +27,6 @@ export class MidiStore {
     outputInUse = ""; //WebMidi.MIDIOutput[] = [];
 
     bytesReceived = 0;  // for displaying progress when reading
-
     sendProgress = null;
 
     constructor(stores) {
@@ -431,8 +385,6 @@ export class MidiStore {
             await wait(20); // to force an update to of the UI to display the above message
         }
 
-        // const messages = getFullNonGlobalConfigSysex(this.stores.state.data, true, true)
-
         let i = 0;
         let t = messages.length;
         this.abort = false;
@@ -440,14 +392,9 @@ export class MidiStore {
             if (this.abort) break;
             if (!message) continue;
             i++;
-            // this.setSendProgress(`sending message ${i} of ${t} (${Math.round(i*100/t)}%)`);
             if (showProgress) this.setSendProgress(`sending... ${Math.round(i*100/t)}% (${presetIndexToXY(getMessageTarget(message))})`);
             if (showBusy) this.stores.state.onBusy({busy: true, progressCurrent: i});
-            // console.log("sending", i);
             await this.send(message);
-            // console.log("wait 100");
-            // await wait(10);
-            // console.log("wait done");
         }
 
         if (showProgress) {
@@ -457,7 +404,6 @@ export class MidiStore {
         if (showBusy) {
             this.stores.state.onBusy({busy: false});
         }
-
     };
 
 }

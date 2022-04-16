@@ -1,6 +1,6 @@
 import React from "react";
 import { saveAs } from 'file-saver';
-import {hs, toHexDump} from "../utils/hexstring";
+import {hs} from "../utils/hexstring";
 import {getTimestamp} from "../utils/misc";
 
 export const DownloadHex = ({data, filename, addTimestamp, className, label}) => {

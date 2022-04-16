@@ -8,7 +8,7 @@ export const DownloadJSON = ({data, filename, addTimestamp, className, label}) =
 
         // let url = window.URL.createObjectURL(new Blob([this.props.data], {type: "application/octet-stream"}));
 
-        let filename = filename;
+        let fname = filename;
 
         if (addTimestamp) {
             let now = new Date();
@@ -19,11 +19,11 @@ export const DownloadJSON = ({data, filename, addTimestamp, className, label}) =
                 ("0" + now.getUTCHours()).slice(-2) + "" +
                 ("0" + now.getUTCMinutes()).slice(-2) + "" +
                 ("0" + now.getUTCSeconds()).slice(-2);
-            filename += '.' + timestamp;
+            fname += '.' + timestamp;
         }
 
         let shadowlink = document.createElement("a");
-        shadowlink.download = filename + ".json";
+        shadowlink.download = fname + ".json";
         shadowlink.style.display = "none";
         shadowlink.href = url;
 
@@ -37,12 +37,8 @@ export const DownloadJSON = ({data, filename, addTimestamp, className, label}) =
 
     }
 
-    // render() {
-        return (
-            <button onClick={handleClick} className={`action-button ${className}`}>{label}</button>
-        );
-    // }
+    return (
+        <button onClick={handleClick} className={`action-button ${className}`}>{label}</button>
+    );
 
 }
-
-// export default DownloadJSON;

@@ -2,7 +2,7 @@ import React, {useRef} from "react";
 import {observer} from "mobx-react-lite";
 import {stores} from "../stores";
 import FACTORY_PRESETS from "../data/factory-presets.json";
-import {mergeDeep, parseSysexDump} from "../pacer/sysex";
+import {parseSysexDump} from "../pacer/sysex";
 
 export const MenuButtons = observer(() => {
 
@@ -21,7 +21,6 @@ export const MenuButtons = observer(() => {
 
     function loadFactoryDefaults() {
         const data = Uint8Array.from(Object.values(FACTORY_PRESETS));
-        // stores.state.data = mergeDeep(parseSysexDump(data));
         stores.state.deepMergeData(parseSysexDump(data));
     }
 

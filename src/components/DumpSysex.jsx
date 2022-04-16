@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import {observer} from "mobx-react-lite";
 import {stores} from "../stores";
 import {
@@ -6,18 +6,9 @@ import {
     MSG_TYPES, COLORS, CONTROLS_FULLNAME, CONTROL_MODES, TARGET_PRESET
 } from "../pacer/constants";
 import {h, hs} from "../utils/hexstring";
-import "./DumpSysex.css";
 import * as Note from "tonal-note";
 import {presetIndexToXY} from "../pacer/utils";
 import "./DumpSysex.css";
-
-/*
-const PresetName = ({ name }) => {
-    return (
-        <div className="dump-preset-name">Preset name: {name}</div>
-    );
-};
-*/
 
 const MidiTable = ({ settings }) => {
     if (settings === null || settings === undefined) return null;
@@ -134,26 +125,17 @@ const Preset = ({ index, data }) => {
     );
 };
 
-// const Presets = ({ presets }) => {
-//     if (presets === null || presets === undefined) return null;
-//     return (
-//         <div>
-//             {Object.keys(presets).map(idx => <Preset key={idx} index={idx} data={presets[idx]} />)}
-//         </div>
-//     );
-// };
 export const DumpSysex = observer(() => {
-// const DumpSysex = ({ data }) => {
-        const data = stores.state.data;
-        // return <pre>{JSON.stringify(data, null, 4)}</pre>;
-        if (!data) return null;
-        console.log("DumpSysex render");
-        return (
-            <div className="dump code">
-                <div>
-                    {Object.keys(data[TARGET_PRESET]).map(idx => <Preset key={idx} index={idx} data={data[TARGET_PRESET][idx]} />)}
-                </div>
+    const data = stores.state.data;
+    // return <pre>{JSON.stringify(data, null, 4)}</pre>;
+    if (!data) return null;
+    console.log("DumpSysex render");
+    return (
+        <div className="dump code">
+            <div>
+                {Object.keys(data[TARGET_PRESET]).map(idx => <Preset key={idx} index={idx} data={data[TARGET_PRESET][idx]} />)}
             </div>
-        );
+        </div>
+    );
 });
 
