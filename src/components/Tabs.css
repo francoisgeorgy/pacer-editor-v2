@@ -1,0 +1,35 @@
+.tabs {
+    /*border-bottom: 2px solid #aaa;*/
+    margin: 30px 0 20px 0;
+    /*padding: 0 0 5px 0;*/
+    padding: 0;
+    display: flex;
+}
+
+.tabs .tab {
+    padding: 5px 15px;
+    border: 1px solid #999;
+    border-bottom-color: black;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: blue;
+    background-color: #f8f8f8;
+}
+
+.tabs .tab-active {
+    border-bottom: none;
+    color: black;
+    border-color: black;
+    background-color: #ffffff;
+}
+
+.tabs .tab-spacer {
+    padding: 0 10px;
+    border-bottom: 1px solid #333;
+}
+
+.tabs .tab-filler {
+    flex-grow: 1;
+}
