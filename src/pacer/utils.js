@@ -104,7 +104,8 @@ export const MessageSummary = message => {
         case MSG_AD_PITCH_BEND: return `Pitch min ${data[1]} max ${data[2]}`;
         case MSG_AD_ATCHAN: return `AT Chan min ${data[1]} max ${data[2]}`;
         case MSG_DAWFUNC: return `DAW Func ${data[0]}`;
-        case MSG_CTRL_OFF: return `OFF`;
+        // case MSG_CTRL_OFF: return 'OFF';
+        case MSG_CTRL_OFF: return '';
 
         case MSG_SW_MIDI_CC_TGGLE: return `CC${data[0]} toggle ${data[1]} \u21C4 ${data[2]}`;
         case MSG_SW_MIDI_CC: return `CC${data[0]} ${DOWN_ARROW}${data[1]} ${UP_ARROW}${data[2]}`;

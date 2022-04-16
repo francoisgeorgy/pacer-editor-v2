@@ -34,7 +34,7 @@ export class StateStore {
     updateMessages = {};
     busy = false;
     busyMessage = "Receiving data, please wait...";
-    bytesExpected = -1;
+    progressMax = -1;
     progress = -1;    // 0..100
     decBase = true;  // true --> decimal base, false --> hex base for number
     extControls = true;
@@ -42,7 +42,7 @@ export class StateStore {
     changed = false;
     D6InfoVisible = false;
     D6InfoHidden = false;
-    detailView = false;
+    detailView = true;
 
     constructor(stores) {
 
@@ -107,7 +107,7 @@ export class StateStore {
         this.updateMessages = {};
         this.busy = false;
         this.busyMessage = "Receiving data, please wait...";
-        this.bytesExpected = -1;
+        this.progressMax = -1;
         this.progress = -1;    // 0..100
         this.decBase = true;  // true --> decimal base, false --> hex base for number
         this.extControls = true;
@@ -115,7 +115,7 @@ export class StateStore {
         this.changed = false;
         this.D6InfoVisible = false;
         this.D6InfoHidden = false;
-        this.detailView = false;
+        this.detailView = true;
 
     }
 
@@ -218,34 +218,33 @@ export class StateStore {
 
     clearBusyHandler = null;
 
-    onBusy({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) {
+    onBusy({busy = false, busyMessage = null, max: max = -1, progressCurrent = -1} = {}) {
 
-        // console.log("StateStore.onBusy", busy, busyMessage, bytesExpected, bytesReceived, this.bytesExpected, this.busy);
+        // console.log("StateStore.onBusy", busy, busyMessage, max, progressCurrent, this.max, this.busy);
 
         let show = (busy !== this.busy) ||
                    ((busyMessage !== null) && (busyMessage !== this.busyMessage)) ||    // buyMessage is not null and has changed
-                   (bytesExpected > 0 && bytesExpected !== this.bytesExpected);     // bytesExpected is not null and has changed
+                   (max > 0 && max !== this.progressMax);     // max is not null and has changed
 
         let progress = -1;
-        if (this.bytesExpected > 0 && bytesReceived > 0) {
-            progress = Math.round(bytesReceived / this.bytesExpected * 100 / 5) * 5;
+        if (this.progressMax > 0 && progressCurrent > 0) {
+            progress = Math.round(progressCurrent / this.progressMax * 100 / 5) * 5;
             show = show || ((progress >= 0) && (progress !== this.progress));
             // console.log("StateStore.onBusy %", progress, show);
         }
 
-
         if (show) {
 
-            console.log("onBusy", show);
+            // console.log("onBusy", show);
 
             if (this.busy !== busy) this.busy = busy;
             if (busyMessage !== null) this.busyMessage = busyMessage;
-            if (bytesExpected > 0 && bytesExpected !== this.bytesExpected) this.bytesExpected = bytesExpected;
+            if (max > 0 && max !== this.progressMax) this.progressMax = max;
             if (busy === false) {
-                this.bytesExpected = -1;
+                this.progressMax = -1;
                 this.progress = -1;
             } else {
-                if (bytesExpected > 0) this.bytesExpected = bytesExpected;
+                if (max > 0) this.progressMax = max;
                 if (this.progress !== progress) {
                     this.progress = progress;
                 }
@@ -261,10 +260,10 @@ export class StateStore {
 
     };
 
-    showBusy({busy = false, busyMessage = null, bytesExpected = -1, bytesReceived = -1} = {}) {
-        // console.log("showBusy init, bytes expected, received:", bytesExpected, bytesReceived);
+    showBusy({busy = false, busyMessage = null, max = -1, progressCurrent = -1} = {}) {
+        // console.log("showBusy init, bytes expected, received:", max, progressCurrent);
         // setTimeout(() => this.onBusy({busy: false}), 20000);
-        this.onBusy({busy: true, busyMessage, bytesExpected, bytesReceived});
+        this.onBusy({busy: true, busyMessage, max, progressCurrent});
     }
 
     hideBusy(delay = 0) {
@@ -537,7 +536,7 @@ export class StateStore {
             this.data[TARGET_PRESET][presetIdTo] = {[CONTROLS_DATA]: {}, [MIDI_DATA]: {}};
             const presetTo = this.data[TARGET_PRESET][presetIdTo];
 
-            console.log(`copy preset ${presetIdFrom} to ${presetIdTo}`);
+            // console.log(`copy preset ${presetIdFrom} to ${presetIdTo}`);
             // console.log(JSON.stringify(this.data[TARGET_PRESET][presetIdTo][CONTROLS_DATA]));
 
             // this.clearPreset(presetIdTo);
@@ -559,7 +558,7 @@ export class StateStore {
             presetTo[MIDI_DATA] = JSON.parse(JSON.stringify(presetFrom[MIDI_DATA]));
 
             // console.log("presetFrom", JSON.stringify(presetFrom));
-            console.log("presetTo", JSON.stringify(presetTo, null, 4));
+            // console.log("presetTo", JSON.stringify(presetTo, null, 4));
 
             // ALL_CONTROLS.forEach(controlId => {
             //     this.addControlUpdateMessage(controlId, getControlUpdateSysexMessages(presetIdTo, controlId, this.data, true, false));
@@ -749,8 +748,6 @@ export class StateStore {
 
     async updatePacer() {
 
-        this.showBusy({busy: true, busyMessage: "write Preset..."});
-
         const messages = [];
 
         Object.getOwnPropertyNames(this.updateMessages).forEach(
@@ -773,10 +770,11 @@ export class StateStore {
             }
         );
 
+        this.showBusy({busy: true, busyMessage: "write Preset...", max: messages.length});
+
         await stores.midi.sendToPacer(messages)
             .then(() => wait(200))
             .then(() => {
-                console.log("send done");
                 this.setChanged(false);
                 this.clearUpdateMessages();
                 this.stores.midi.readPreset(this.currentPresetIndex);

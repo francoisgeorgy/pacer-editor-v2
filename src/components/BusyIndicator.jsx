@@ -9,7 +9,7 @@ export const BusyIndicator = observer(({msg, className}) => {
 
         const { busy, busyMessage, progress } = stores.state;
 
-    console.log("BusyIndicator", busy, busyMessage, progress);
+    // console.log("BusyIndicator", busy, busyMessage, progress);
 
         return busy ?
             <div className={className || 'busy'}>

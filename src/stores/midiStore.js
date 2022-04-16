@@ -227,7 +227,7 @@ export class MidiStore {
     onMidiMessage(message) {
         if (isSysexData(message.data)) {
             this.bytesReceived += message.data.length;
-            this.stores.state.onBusy({busy: true, bytesReceived: this.bytesReceived});
+            this.stores.state.onBusy({busy: true, progressCurrent: this.bytesReceived});
             this.stores.state.deepMergeData(parseSysexDump(message.data));
             // this.stores.state.storeBytes(message.data);
         } else {
@@ -348,7 +348,7 @@ export class MidiStore {
         // console.log("midiStore.send", hs(messages));
         // if (!this.outputInUse) return;
         this.outputById(outputId ?? this.outputInUse)?.send(messages);
-        await wait(100);
+        await wait(40);
     }
 
     sendSysex = async (msg, sendForReal = true) => {
@@ -376,15 +376,14 @@ export class MidiStore {
 
     //=============================================================================================
 
-    readPacer = (msg, bytesExpected, busyMessage = "Please wait...") => {
+    readPacer = (msg, max, busyMessage = "Please wait...") => {
         this.bytesReceived = 0;
-        this.stores.state.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected});
+        this.stores.state.showBusy({busy: true, busyMessage: busyMessage, progressCurrent: 0, max});
         // this.saveBytes = false;
         this.sendSysex(msg);
     };
 
     readPreset(index) {
-        console.log("readPreset", index);
         // if (midiConnected(this.stores.state.output) && isVal(index)) {
         if (this.deviceConnected) {
             this.readPacer(requestPreset(index), SINGLE_PRESET_EXPECTED_BYTES);
@@ -398,9 +397,8 @@ export class MidiStore {
      * @param busyMessage
      */
     readFullDump = (busyMessage = "Please wait...") => {
-        // console.log("readFullDump()");
         this.bytesReceived = 0;
-        this.stores.state.showBusy({busy: true, busyMessage: busyMessage, bytesReceived: 0, bytesExpected: FULL_DUMP_EXPECTED_BYTES});
+        this.stores.state.showBusy({busy: true, busyMessage: busyMessage, progressCurrent: 0, max: FULL_DUMP_EXPECTED_BYTES});
         // this.stores.state.clearBytes();
         this.sendSysex(requestAllPresets());
     };
@@ -412,7 +410,6 @@ export class MidiStore {
     }
 
     setSendProgress(msg) {
-        // console.log("update progress", msg);
         this.sendProgress = msg;
     }
 
@@ -420,7 +417,7 @@ export class MidiStore {
      * Send the current data saved in stores.state.bytes
      * @param patch
      */
-    sendToPacer = async (messages) => {
+    sendToPacer = async (messages, showProgress=true, showBusy=true) => {
 
         console.log("sendToPacer");
 
@@ -429,8 +426,10 @@ export class MidiStore {
             return;
         }
 
-        this.sendProgress = 'building sysex messages...';
-        await wait(20); // to force an update to of the UI to display the above message
+        if (showProgress) {
+            this.sendProgress = 'building sysex messages...';
+            await wait(20); // to force an update to of the UI to display the above message
+        }
 
         // const messages = getFullNonGlobalConfigSysex(this.stores.state.data, true, true)
 
@@ -442,15 +441,23 @@ export class MidiStore {
             if (!message) continue;
             i++;
             // this.setSendProgress(`sending message ${i} of ${t} (${Math.round(i*100/t)}%)`);
-            this.setSendProgress(`sending... ${Math.round(i*100/t)}% (${presetIndexToXY(getMessageTarget(message))})`);
-            console.log("sending", i);
+            if (showProgress) this.setSendProgress(`sending... ${Math.round(i*100/t)}% (${presetIndexToXY(getMessageTarget(message))})`);
+            if (showBusy) this.stores.state.onBusy({busy: true, progressCurrent: i});
+            // console.log("sending", i);
             await this.send(message);
             // console.log("wait 100");
             // await wait(10);
             // console.log("wait done");
         }
 
-        setTimeout(() => this.setSendProgress(null), 1000);
+        if (showProgress) {
+            setTimeout(() => this.setSendProgress(null), 1000);
+        }
+
+        if (showBusy) {
+            this.stores.state.onBusy({busy: false});
+        }
+
     };
 
 }

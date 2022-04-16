@@ -211,6 +211,12 @@ export const Preset = observer(() => {
                 <button className="action-button update" onClick={() => stores.state.updatePacer()}>Update Pacer</button>
             </div>}
 
+{/*
+            <div>
+                <pre>{JSON.stringify(stores?.state?.data?.[TARGET_PRESET]?.[presetIndex], null, 4)}</pre>
+            </div>
+*/}
+
         </div>
     );
 
