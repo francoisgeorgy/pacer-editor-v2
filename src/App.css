@@ -39,6 +39,10 @@
     background-color: #ffff30;
 }
 
+.underline {
+    text-decoration: underline;
+}
+
 .dim {
     color: #999;
 }

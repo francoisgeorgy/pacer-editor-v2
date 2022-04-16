@@ -29,13 +29,11 @@ export const Tabs = () => {
             <div className="tab-spacer">
             </div>
             <MenuLink to="/patch"           label="Import/Export" />
-            <div className="tab-spacer tab-filler">
-            </div>
-{/*
-            <MenuLink to="/help"            label="Help" />
             <div className="tab-spacer">
             </div>
-*/}
+            <MenuLink to="/help"            label="Help" />
+            <div className="tab-spacer tab-filler">
+            </div>
         </div>
     );
 };

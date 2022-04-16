@@ -1,63 +1,57 @@
 import React from 'react';
 import "./Home.css";
+import {Tabs} from "../components/Tabs";
 
 export const Home = () => {
 
     return (
-        <div className="content home mt-40">
+        <div className="content">
 
-            <h1>Requirements</h1>
+            <Tabs />
+
+            <h1 className="mt-40">Requirements</h1>
 
             <div className="doc">
                 <p>This editor requires a browser that support
-                    the <a href="http://webaudio.github.io/web-midi-api/" target="_blank" rel="noopener noreferrer">Web MIDI API</a>.</p>
-                <p>Currently, only <span className="strong">Chrome</span> and <span className="strong">Opera</span> support this standard.
-                    This application will therefore <span className="italic">not</span> work in Firefox, Safari, IE or Edge.</p>
+                    the <a href="https://webaudio.github.io/web-midi-api/" target="_blank" rel="noopener noreferrer">Web MIDI API</a>.</p>
+                <p><span className="strong">Chrome</span> is recommended.</p>
                 <p>This editor does not work on iPad or Android tablet either.</p>
                 <p>Ensure your Pacer is running the <a href="https://nektartech.com/updating-firmware-pacer/" target="_blank" rel="noopener noreferrer">latest firmware v10112</a>.</p>
             </div>
-
-{/*
-            <h1>Known issues</h1>
-
-            <div className="doc">
-                <p>The preset D6 cannot be read alone.</p>
-            </div>
-*/}
 
             <h1>Limitations</h1>
 
             <div className="doc">
                 <p>The current version of this editor isn't able to edit the Global configuration of the Pacer. This is planned for a future release.</p>
-                <p>This editor is provided as-is, without warranty of any kind, express or implied. If you encounter a bug, please fill a bug report with <a href="https://github.com/francoisgeorgy/pacer-editor/issues/new" target="_blank" rel="noopener noreferrer">this form</a>.</p>
+                <p>This editor is provided as-is, without warranty of any kind, express or implied. If you encounter a bug, please fill a bug report with <a href="https://github.com/francoisgeorgy/pacer-editor-v2/issues/new" target="_blank" rel="noopener noreferrer">this form</a>.</p>
             </div>
 
             <h1>Connecting your Pacer</h1>
 
             <div className="doc">
                 <p>Make sure your Pacer is connected to your computer and switched-on.</p>
-                <p>This editor listen on all MIDI ports. A future version may offer the possibility to choose a specific port.</p>
                 <p>In case of problem, when either the application or Pacer does not respond or communicate, try to reload the application (refresh the page) or reboot the Pacer.</p>
                 <p>You can find info about WebMIDI at <a href="https://studiocode.dev/support/webmidi/" target="_blank" rel="noopener noreferrer">studiocode.dev/support/webmidi</a></p>
             </div>
 
             <h1>Editing presets</h1>
+
             <div className="doc">
                 <p>When you edit the <span className="strong">CURRENT</span> preset, your changes are immediately applied.</p>
-                <p>When you edit any other presets, you edit the <span className="fluo">saved</span> configuration of the preset
-                    and your changes will only be applied when you <span className="fluo">load</span> this preset in the Pacer.</p>
+                <p>When you edit any other presets, you edit the <span className="underline">saved</span> configuration of the preset
+                    and your changes will only be applied when you <span className="underline">load</span> this preset in the Pacer.</p>
                 <p>It is currently not possible to remotely force the Pacer to load a specific preset.</p>
                 <div>
-                    <h3>Example 1:</h3>
+                    <p className="bold">Example 1:</p>
                     <p>The currently loaded preset (CURRENT) is preset <span className="strong">A5</span>.</p>
                     <p>You edit the preset <span className="strong">A5</span>.</p>
-                    <p>After you save your modifications, the display will show blinking dots. That means the current preset does not reflect the saved preset anymore.
-                        You have to <span className="fluo">reload</span> the preset to be able to use your updated version:</p>
+                    <p>After you save your modifications, <span className="strong">the display will show blinking dots</span>. That means the current preset does not reflect the saved preset anymore.<br />
+                        You have to <span className="underline">reload</span> the preset to be able to use your updated version:</p>
                     <p>- long-press the <span className="strong">Preset</span> switch, then press <span className="strong">A</span>, and finally press <span className="strong">5</span>.</p>
                 </div>
 
                 <div>
-                    <h3>Example 2:</h3>
+                    <p className="bold">Example 2:</p>
                     <p>The currently loaded preset (CURRENT) is preset <span className="strong">A1</span>.</p>
                     <p>You edit the preset <span className="strong">D3</span>.</p>
                     <p>After you save your modifications of preset <span className="strong">D3</span>, if you want to use it, of course you have to load it:</p>
@@ -69,9 +63,9 @@ export const Home = () => {
             <h1>Controls settings</h1>
             <div className="doc">
                 <p>Each control (buttons 1-6 & A-D, external FS1-FS4 & EXP1-EXP2) can be configured with up to 6 steps.</p>
-                <p>At the most basic level, each step has a <span className="italic fluo">type</span> value that determines the message or action the step will send or execute, as well as 3 data fields
+                <p>At the most basic level, each step has a <span className="italic">type</span> value that determines the message or action the step will send or execute, as well as 3 data fields
                     that configure the options and parameters for the step depending on the selected type.</p>
-
+                <p>Note: in the following table, FW = footswitch.</p>
                 <table className="doc-controls">
                     <thead>
                     <tr>
@@ -88,7 +82,7 @@ export const Home = () => {
                     <tbody>
                     <tr>
                         <td className="ctrl-type">CC Toggle</td>
-                        <td className="ctrl-desc">Sends a MIDI CC message that toggles between two values each time the button is pressed</td>
+                        <td className="ctrl-desc">Sends a MIDI CC message that toggles between two values each time the FW is pressed</td>
                         <td>MIDI CC</td>
                         <td>0-127</td>
                         <td className="allow-break">Value to send on Press 1</td>
@@ -98,7 +92,7 @@ export const Home = () => {
                     </tr>
                     <tr>
                         <td className="ctrl-type">CC Trigger</td>
-                        <td className="ctrl-desc">Sends a MIDI CC message when the button is pressed</td>
+                        <td className="ctrl-desc">Sends a MIDI CC message when the FW is pressed</td>
                         <td>MIDI CC</td>
                         <td>0-127</td>
                         <td className="allow-break">Value to send when pressing down</td>
@@ -108,7 +102,7 @@ export const Home = () => {
                     </tr>
                     <tr>
                         <td className="ctrl-type">CC Step</td>
-                        <td className="ctrl-desc"> ??? </td>
+                        <td className="ctrl-desc">Sends a MIDI CC message with a value that increase or decrease each time the FW is pressed.</td>
                         <td>MIDI CC</td>
                         <td>0-127</td>
                         <td>Start value</td>
@@ -118,7 +112,7 @@ export const Home = () => {
                     </tr>
                     <tr>
                         <td className="ctrl-type">Note</td>
-                        <td className="ctrl-desc">Send a note when the button is pressed, stop when released</td>
+                        <td className="ctrl-desc">Send a note when the FW is pressed, stop when it is released</td>
                         <td>Note</td>
                         <td>0-127</td>
                         <td>Velocity</td>
@@ -128,7 +122,7 @@ export const Home = () => {
                     </tr>
                     <tr>
                         <td className="ctrl-type">Note Toggle</td>
-                        <td className="ctrl-desc">Send a note when the button is pressed, stop when pressed again</td>
+                        <td className="ctrl-desc">Send a note when the FW is pressed, stop when it is pressed again</td>
                         <td>Note</td>
                         <td>0-127</td>
                         <td>Velocity</td>
@@ -138,7 +132,7 @@ export const Home = () => {
                     </tr>
                     <tr>
                         <td className="ctrl-type">Program & Bank</td>
-                        <td className="ctrl-desc">Send a MIDI Program Change message when the button is pressed</td>
+                        <td className="ctrl-desc">Send a MIDI Program Change message when the FW is pressed</td>
                         <td>Program</td>
                         <td>0-127</td>
                         <td>Bank LSB</td>
@@ -148,7 +142,7 @@ export const Home = () => {
                     </tr>
                     <tr>
                         <td className="ctrl-type">Program Step</td>
-                        <td className="ctrl-desc">Send a MIDI Program Step message ??? </td>
+                        <td className="ctrl-desc">Send a MIDI Program that is incremented or decremented each time the FW is pressed.</td>
                         <td className="italic">not used</td>
                         <td>--</td>
                         <td>Start</td>
@@ -210,7 +204,7 @@ export const Home = () => {
                         <td className="ctrl-type">Preset Inc/Dec</td>
                         <td className="ctrl-desc">Switch to the next/previous Preset</td>
                         <td>Direction</td>
-                        <td>Increment: ??<br />Decrement: ??</td>
+                        <td>Increment: 0<br />Decrement: 1</td>
                         <td className="italic">not used</td>
                         <td>--</td>
                         <td className="italic">not used</td>
@@ -218,21 +212,21 @@ export const Home = () => {
                     </tr>
                     <tr>
                         <td className="ctrl-type">Step Select</td>
-                        <td className="ctrl-desc">?? Action a specific Step for a Control</td>
+                        <td className="ctrl-desc">Action a specific Step for a Control</td>
                         <td>Control Target</td>
-                        <td>?? A-D,<br />1-6,<br />FS1-4,<br />EXP1-2</td>
+                        <td>A-D,<br />1-6,<br />FS1-4,<br />EXP1-2</td>
                         <td>Step</td>
-                        <td>?? 1-6 (0-indexed?)</td>
+                        <td>1-6 (0-indexed)</td>
                         <td className="italic">not used</td>
                         <td>--</td>
                     </tr>
                     <tr>
                         <td className="ctrl-type">Step Inc/Dec</td>
-                        <td className="ctrl-desc">?? Action the next/prev Step for a Control</td>
+                        <td className="ctrl-desc">Action the next/prev Step for a Control</td>
                         <td>Control Target</td>
-                        <td>?? A-D,<br />1-6,<br />FS1-4,<br />EXP1-2</td>
+                        <td>A-D,<br />1-6,<br />FS1-4,<br />EXP1-2</td>
                         <td>Direction</td>
-                        <td>Increment: ??<br />Decrement: ??</td>
+                        <td>Increment: 0<br />Decrement: 1</td>
                         <td className="italic">not used</td>
                         <td>--</td>
                     </tr>
@@ -257,7 +251,7 @@ export const Home = () => {
                 <p>- Reload the editor (F5 or Cmd-R or Ctrl-R)</p>
                 <p>- Restart the Pacer.</p>
                 <p>- Close any other applications that may be connected to the Pacer.</p>
-                <p>If you mess up the configuration of your Pacer, do a <span className="fluo">Factory Restore</span>. See page 21 of the Pacer User Guide for the procedure.</p>
+                <p>If you mess up the configuration of your Pacer, do a <span className="bold">Factory Restore</span>. See <span className="bold">page 21 of the Pacer User Guide</span> for the procedure.</p>
             </div>
 
             <h1>MIDI in your browser</h1>
