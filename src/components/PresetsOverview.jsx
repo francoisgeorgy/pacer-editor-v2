@@ -177,7 +177,7 @@ const PresetTitle = withRouter(observer(({ history, presetIndex, presetName} = {
     return (
         <div className="preset-title-row">
             <div className="preset-name" onClick={gotoPreset}>
-                {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold as-link">{presetName}</span>{additionalInfos}
+                {presetIndexToXY(presetIndex)}<span className="bullet">•</span><span className="bold as-link">{presetName}</span> {additionalInfos}
             </div>
         </div>
     );
