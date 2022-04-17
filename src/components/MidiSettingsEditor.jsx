@@ -18,7 +18,7 @@ const MidiNote = ({ note, onChange }) => {
                 Array.from(Array(127).keys()).map(
                     i => {
                         let n = Note.fromMidi(i, true);
-                        return <option key={i} value={i}>{n}</option>
+                        return <option key={i} value={i}>{n} ({i})</option>
                     })
             }
         </select>

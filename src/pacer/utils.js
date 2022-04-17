@@ -29,6 +29,7 @@ import {
     MSG_SW_STEP_INC_DEC,
     MSG_SW_STEP_SELECT, PRESET_TARGET, RELAY_MODE_LABEL, TARGET_NAME
 } from "./constants";
+import * as Note from "tonal-note";
 // SYSEX:
 // 0x01	Current user
 // 0x02	Track
@@ -111,8 +112,8 @@ export const MessageSummary = message => {
         case MSG_SW_MIDI_CC: return `CC${data[0]} ${DOWN_ARROW}${data[1]} ${UP_ARROW}${data[2]}`;
         case MSG_SW_MIDI_CC_STEP: return `CC${data[0]} step ${data[1]} to ${data[2]}`;
 
-        case MSG_SW_NOTE: return `Note ${data[0]} vel ${data[1]}`;
-        case MSG_SW_NOTE_TGGLE: return `Note Toggle ${data[0]} vel ${data[1]}`;
+        case MSG_SW_NOTE: return `Note ${data[0]} (${Note.fromMidi(data[0], true)})  velo ${data[1]}`;
+        case MSG_SW_NOTE_TGGLE: return `Note Toggle ${data[0]} (${Note.fromMidi(data[0], true)}) velo ${data[1]}`;
 
         // case MSG_SW_PRG_BANK: return `PRG BANK ${data[0]} ${data[1]}:${data[2]}`;
         case MSG_SW_PRG_BANK:
