@@ -23,7 +23,8 @@ export const Home = () => {
 
             <div className="doc">
                 <p>The current version of this editor isn't able to edit the Global configuration of the Pacer. This is planned for a future release.</p>
-                <p>This editor is provided as-is, without warranty of any kind, express or implied. If you encounter a bug, please fill a bug report with <a href="https://github.com/francoisgeorgy/pacer-editor-v2/issues/new" target="_blank" rel="noopener noreferrer">this form</a>.</p>
+                <p>This editor is provided as-is, without warranty of any kind, express or implied.</p>
+                <p className="bold">If you encounter a bug, please fill a bug report with <a href="https://github.com/francoisgeorgy/pacer-editor-v2/issues/new" target="_blank" rel="noopener noreferrer">this form</a>.</p>
             </div>
 
             <h1>Connecting your Pacer</h1>
