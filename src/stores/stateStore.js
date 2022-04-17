@@ -639,7 +639,7 @@ export class StateStore {
             }
         );
 
-        this.showBusy({busy: true, busyMessage: "write Preset...", max: messages.length});
+        this.showBusy({busy: true, busyMessage: "writing Preset...", max: messages.length});
 
         await stores.midi.sendToPacer(messages)
             .then(() => wait(250))
