@@ -34,6 +34,7 @@ export class StateStore {
     updateMessages = {};
     busy = false;
     busyMessage = "Receiving data, please wait...";
+    abortButton = false;    // show|hide button
     progressMax = -1;
     progress = -1;    // 0..100
     decBase = true;  // true --> decimal base, false --> hex base for number
@@ -77,6 +78,7 @@ export class StateStore {
             toggleForceReread: action,
             setForceReread: action,
             onBusy: action,
+            showBusy: action,
             togglePresetOverviewSelection: action,
             clearPresetSelection: action,
             selectPreset: action,
@@ -107,6 +109,7 @@ export class StateStore {
         this.updateMessages = {};
         this.busy = false;
         this.busyMessage = "Receiving data, please wait...";
+        this.abortButton = false;
         this.progressMax = -1;
         this.progress = -1;    // 0..100
         this.decBase = true;  // true --> decimal base, false --> hex base for number
@@ -257,7 +260,8 @@ export class StateStore {
 
     };
 
-    showBusy({busy = false, busyMessage = null, max = -1, progressCurrent = -1} = {}) {
+    showBusy({busy = false, busyMessage = null, max = -1, progressCurrent = -1, abortButton = false} = {}) {
+        this.abortButton = abortButton;
         this.onBusy({busy: true, busyMessage, max, progressCurrent});
     }
 

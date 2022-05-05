@@ -1,11 +1,11 @@
 import React, {useRef} from 'react';
-import {stores} from "../stores";
 import {observer} from "mobx-react-lite";
+import {stores} from "../stores";
 import {getFullNonGlobalConfigSysex} from "../pacer/sysex";
 import {PresetSelectorAndButtons} from "../components/PresetSelectorAndButtons";
 import {DownloadBin} from "../components/DownloadBin";
-import "./ImportExport.css";
 import {Tabs} from "../components/Tabs";
+import "./ImportExport.css";
 
 export const ImportExport = observer(() => {
 
@@ -23,7 +23,7 @@ export const ImportExport = observer(() => {
     }
 
     function sendToPacer() {
-        stores.midi.sendToPacer(getFullNonGlobalConfigSysex(this.stores.state.data, true, true)).then(r => () => console.log("done sending sysex"));
+        stores.midi.sendToPacer(getFullNonGlobalConfigSysex(stores.state.data, true, true)).then(r => () => console.log("done sending sysex"));
     }
 
     const data = stores.state.data;
@@ -83,7 +83,7 @@ export const ImportExport = observer(() => {
                         </div>
                     </div>
 
-                    {stores.midi.sendProgress &&
+                    {/* stores.midi.sendProgress &&
                     <div className="no-border">
                         <div>
                             {stores.midi.sendProgress}
@@ -91,7 +91,7 @@ export const ImportExport = observer(() => {
                         <div>
                             <button onClick={() => stores.midi.abortSend()}>abort</button>
                         </div>
-                    </div>}
+                    </div> */}
                 </div>
 
                 <div>

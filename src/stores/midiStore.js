@@ -387,6 +387,9 @@ export class MidiStore {
 
         let i = 0;
         let t = messages.length;
+
+        this.stores.state.showBusy({busy: true, busyMessage: "sending presets...", progressCurrent: 0, max: t, abortButton: true});
+
         this.abort = false;
         for (const message of messages) {
             if (this.abort) break;
